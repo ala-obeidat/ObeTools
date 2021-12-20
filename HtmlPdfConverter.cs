@@ -7,15 +7,17 @@ namespace ObeTools
     public static class HtmlPdfConverter
     {
         #region Methods
+        public static void CreatePdf(string outputPath, string htmlInput)
+        {
+
+            var converter = GetConverter();
+            converter.Options.DisplayFooter = false;
+            GeneratePDF(converter, outputPath, htmlInput, null, null);
+        }
         public static void CreatePdf(string outputPath, string htmlInput, string headrImageUrl, string footerImageUrl)
         {
 
-            var converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A4;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 1024;
-            converter.Options.WebPageHeight = 0;
-            converter.Options.MarginTop = 20;
+            var converter = GetConverter();
             // footer settings
             converter.Options.DisplayFooter = true;
             GeneratePDF(converter, outputPath, htmlInput, headrImageUrl, footerImageUrl);
@@ -23,12 +25,7 @@ namespace ObeTools
         public static void CreatePdf(string outputPath, string htmlInput, string headrImageUrl, string footerImageUrl, HtmlToPdfOptions options)
         {
 
-            var converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = options.PdfPageSize;
-            converter.Options.PdfPageOrientation = options.PdfPageOrientation;
-            converter.Options.WebPageWidth = options.WebPageWidth;
-            converter.Options.WebPageHeight = options.WebPageHeight;
-            converter.Options.MarginTop = options.MarginTop;
+            var converter = GetConverter(options);
             // footer settings
             converter.Options.DisplayFooter = options.DisplayFooter;
             GeneratePDF(converter, outputPath, htmlInput, headrImageUrl, footerImageUrl);
@@ -36,6 +33,28 @@ namespace ObeTools
         #endregion
 
         #region Helper
+        private static HtmlToPdf GetConverter(HtmlToPdfOptions options = null)
+        {
+            var converter = new HtmlToPdf();
+            if (options != null)
+            {
+                converter.Options.PdfPageSize = options.PdfPageSize;
+                converter.Options.PdfPageOrientation = options.PdfPageOrientation;
+                converter.Options.WebPageWidth = options.WebPageWidth;
+                converter.Options.WebPageHeight = options.WebPageHeight;
+                converter.Options.MarginTop = options.MarginTop;
+            }
+            else
+            {
+                converter.Options.PdfPageSize = PdfPageSize.A4;
+                converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+                converter.Options.WebPageWidth = 1024;
+                converter.Options.WebPageHeight = 0;
+                converter.Options.MarginTop = 20;
+            }
+            return converter;
+
+        }
         private static void GeneratePDF(HtmlToPdf converter, string outputPath, string htmlInput, string headrImageUrl, string footerImageUrl)
         {
             converter.Footer.DisplayOnFirstPage = true;
