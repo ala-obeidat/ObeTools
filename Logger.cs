@@ -14,7 +14,6 @@ namespace ObeTools
         #region Method
         public static string LogException(string logName, string logDirectory, Exception e, string caption = "")
         {
-
             try
             {
                 var text = GetExeptionLogLine(e, caption);
@@ -25,14 +24,17 @@ namespace ObeTools
         }
         public static void LogInfo<T>(string logName, string logDirectory, string caption, T data, string method)
         {
-
-            var model = new LogModel()
+            try
             {
-                Data = JsonSerializer.Serialize(data),
-                Caption = caption,
-                Method = method,
-            };
-            WriteToFile(logName, logDirectory, "Info", model.ToString());
+                var model = new LogModel()
+                {
+                    Data = JsonSerializer.Serialize(data),
+                    Caption = caption,
+                    Method = method,
+                };
+                WriteToFile(logName, logDirectory, "Info", model.ToString());
+            }
+            catch { }
         }
         #endregion
 
