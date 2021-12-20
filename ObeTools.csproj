@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>disable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Ala Obeidat</Authors>
+    <Description>Help any .Net developer</Description>
+    <Copyright>www.alaobeidat.com</Copyright>
+    <PackageProjectUrl>https://github.com/ala-obeidat/ObeTools</PackageProjectUrl>
+    <PackageIcon>me.png</PackageIcon>
+    <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\Desktop\Personal\me.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="5.8.4" />
+    <PackageReference Include="QRCoder" Version="1.4.3" />
+    <PackageReference Include="Select.HtmlToPdf.NetCore" Version="21.2.0" />
+  </ItemGroup>
+
+</Project>
