@@ -85,7 +85,7 @@ namespace ObeTools
             {
                 var totalRowsXLSX = osheet.Dimension.End.Row;
                 int totalcols = osheet.Dimension.End.Column;
-                for (int i = skipFirstRow ? (totalRowsXLSX + 2) : (totalRowsXLSX + 1); i <= totalRowsXLSX; i++)
+                for (int i = skipFirstRow ? 2 : 1; i <= totalRowsXLSX; i++)
                 {
                     string[] subStrings = new string[totalcols];
                     for (int j = 1; j <= totalcols; j++)
