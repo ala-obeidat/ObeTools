@@ -7,7 +7,7 @@ namespace ObeTools
     public static class QRCodeImageGenerator
     {
         #region Methods
-        public static void BuildQr(string text, string imagePath, string centerPath, bool utfEncoding)
+        public static void Build(string text, string imagePath, string centerPath, bool utfEncoding)
         {
             Bitmap centerImage = null;
             if (!string.IsNullOrEmpty(centerPath) && File.Exists(centerPath))

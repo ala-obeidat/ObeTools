@@ -11,10 +11,11 @@
     <PackageIcon>me.png</PackageIcon>
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\Desktop\Personal\me.png">
+    <None Include="C:\Users\ala_w\Desktop\Personal\me.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -24,6 +25,13 @@
     <PackageReference Include="EPPlus" Version="5.8.4" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
     <PackageReference Include="Select.HtmlToPdf.NetCore" Version="21.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
