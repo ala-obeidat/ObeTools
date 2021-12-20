@@ -7,10 +7,7 @@ namespace ObeTools
     public static class TLV
     {
         #region Methods
-        public static Dictionary<int, string> Decode(byte[] data)
-        {
-            return null;
-        }
+
         public static byte[] Encode(Dictionary<int, string> tagValues)
         {
             if (tagValues == null || tagValues.Count == 0)
