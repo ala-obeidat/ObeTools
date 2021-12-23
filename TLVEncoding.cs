@@ -1,13 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ObeTools
 {
-    public static class TLV
+    public static class TLVEncoding
     {
         #region Methods
-
+        public static Dictionary<int, string> Decode(byte[] data)
+        {
+            Dictionary<int, string> result = null;
+            if (data.Any())
+            {
+                var hexString = HexStringFromHexBytes(data);
+                result = FromTagValue(hexString);
+            }
+            return result;
+        }
         public static byte[] Encode(Dictionary<int, string> tagValues)
         {
             if (tagValues == null || tagValues.Count == 0)
@@ -19,12 +30,12 @@ namespace ObeTools
             {
                 data.Append(GetTagValue(tagValue));
             }
-            return HexStringToHex(data.ToString());
+            return HexStringToHexBytes(data.ToString());
         }
         #endregion
 
         #region Helper
-        private static byte[] HexStringToHex(string inputHex)
+        private static byte[] HexStringToHexBytes(string inputHex)
         {
             var resultantArray = new byte[inputHex.Length / 2];
             for (var i = 0; i < resultantArray.Length; i++)
@@ -32,6 +43,10 @@ namespace ObeTools
                 resultantArray[i] = System.Convert.ToByte(inputHex.Substring(i * 2, 2), 16);
             }
             return resultantArray;
+        }
+        private static string HexStringFromHexBytes(byte[] inputHex)
+        {
+            return BitConverter.ToString(inputHex).Replace("-", "");
         }
         private static string GetTagValue(KeyValuePair<int, string> tagValueItem)
         {
@@ -62,6 +77,21 @@ namespace ObeTools
                 tagNum = "0" + tagNum;
             }
             return $"{tagNum}{lengthBytes}{valueBytes}";
+        }
+        private static Dictionary<int, string> FromTagValue(string input)
+        {
+            var result = new Dictionary<int, string>();
+            var tagValueItem = input;
+            while (!string.IsNullOrEmpty(tagValueItem))
+            {
+                var tagNum = Convert.ToInt32(tagValueItem[..2], 16);
+                var lengthNum = Convert.ToInt32(tagValueItem[2..4], 16) * 2;
+                var tagHexValue = tagValueItem.Substring(4, lengthNum);
+                var tagValue = Encoding.UTF8.GetString(HexStringToHexBytes(tagHexValue));
+                result.Add(tagNum, tagValue);
+                tagValueItem = tagValueItem[(lengthNum + 4)..];
+            }
+            return result;
         }
         private static string GetHexa(string value)
         {
