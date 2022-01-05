@@ -1,10 +1,12 @@
 ﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ObeTools
 {
@@ -99,6 +101,82 @@ namespace ObeTools
                 }
             }
             return pageStrings;
+        }
+
+        public static string GetStringValue(string[] data, int index)
+        {
+            if (data.Length > index)
+            {
+                return data[index];
+            }
+
+            return null;
+        }
+        public static int? GetIntValue(string[] data, int index)
+        {
+            if (data.Length > index)
+            {
+                if (int.TryParse(data[index], out int result))
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+        public static DateTime GetDateValue(string[] data, int index)
+        {
+            DateTime estimatedDate = DateTime.Now;
+            if (!string.IsNullOrEmpty(data[index]))
+            {
+                DateTime testDate = DateTime.MinValue;
+                try
+                {
+                    if (!DateTime.TryParse(data[index], out testDate))
+                    {
+                        string[] dateInfo = Regex.Replace(data[index], @"\s", string.Empty).Split('/');
+                        if (dateInfo[1].Length == 1)
+                        {
+                            dateInfo[1] = "0" + dateInfo[1];
+                        }
+
+                        if (dateInfo[0].Length == 1)
+                        {
+                            dateInfo[0] = "0" + dateInfo[0];
+                        }
+
+                        int day = Convert.ToInt32(dateInfo[0]);
+                        int month = Convert.ToInt32(dateInfo[1]);
+                        if (month > 12)
+                        {
+                            month = Convert.ToInt32(dateInfo[0]);
+                            day = Convert.ToInt32(dateInfo[1]);
+                        }
+                        testDate = new DateTime(Convert.ToInt32(dateInfo[2].Substring(0, 4)), month, day);
+                    }
+                }
+                catch { }
+                if (testDate != DateTime.MinValue)
+                {
+                    estimatedDate = testDate;
+                }
+            }
+            return estimatedDate;
+        }
+        public static int GetIntEnum(string[] data, int index, Type type)
+        {
+            if (data.Length > index)
+            {
+                if (Enum.TryParse(type, Regex.Replace(data[index], @"\s", string.Empty), out object result))
+                {
+                    if (result != null)
+                    {
+                        return (int)result;
+                    }
+                }
+            }
+
+            return 0;
         }
         #endregion
 
