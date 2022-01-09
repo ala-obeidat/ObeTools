@@ -14,7 +14,8 @@ namespace ObeTools
 
             var converter = GetConverter();
             converter.Options.DisplayFooter = false;
-            GeneratePDF(converter, outputPath, htmlInput, null, null);
+            var doc = GetPDF(converter, htmlInput, null, null);
+            SavePdf(doc, outputPath);
         }
         public static void CreatePdf(string outputPath, string htmlInput, string header, string footer)
         {
@@ -22,7 +23,8 @@ namespace ObeTools
             var converter = GetConverter();
             // footer settings
             converter.Options.DisplayFooter = true;
-            GeneratePDF(converter, outputPath, htmlInput, header, footer);
+            var doc = GetPDF(converter, htmlInput, header, footer);
+            SavePdf(doc, outputPath);
         }
         public static void CreatePdf(string outputPath, string htmlInput, string header, string footer, ConverterOptionModel options)
         {
@@ -30,8 +32,38 @@ namespace ObeTools
             var converter = GetConverter(options);
             // footer settings
             converter.Options.DisplayFooter = options.DisplayFooter;
-            GeneratePDF(converter, outputPath, htmlInput, header, footer);
+            var doc = GetPDF(converter, htmlInput, header, footer);
+            SavePdf(doc, outputPath);
         }
+
+
+        public static void CreatePdf(Stream outputStream, string htmlInput, bool leaveStreamOpen = false)
+        {
+
+            var converter = GetConverter();
+            converter.Options.DisplayFooter = false;
+            var doc = GetPDF(converter, htmlInput, null, null);
+            SavePdf(doc, outputStream, leaveStreamOpen);
+        }
+        public static void CreatePdf(Stream outputStream, string htmlInput, string header, string footer, bool leaveStreamOpen = false)
+        {
+
+            var converter = GetConverter();
+            // footer settings
+            converter.Options.DisplayFooter = true;
+            var doc = GetPDF(converter, htmlInput, header, footer);
+            SavePdf(doc, outputStream, leaveStreamOpen);
+        }
+        public static void CreatePdf(Stream outputStream, string htmlInput, string header, string footer, ConverterOptionModel options, bool leaveStreamOpen = false)
+        {
+
+            var converter = GetConverter(options);
+            // footer settings
+            converter.Options.DisplayFooter = options.DisplayFooter;
+            var doc = GetPDF(converter, htmlInput, header, footer);
+            SavePdf(doc, outputStream, leaveStreamOpen);
+        }
+
         #endregion
 
         #region Helper
@@ -63,7 +95,35 @@ namespace ObeTools
             return converter;
 
         }
-        private static void GeneratePDF(HtmlToPdf converter, string outputPath, string htmlInput, string header, string footer)
+
+        private static void SavePdf(PdfDocument doc, string outputPath)
+        {
+            if (File.Exists(outputPath))
+            {
+                File.Delete(outputPath);
+            }
+            // save pdf document
+            doc.Save(outputPath);
+            // close pdf document
+            doc.Close();
+        }
+        private static void SavePdf(PdfDocument doc, Stream outputStream, bool leaveStreamOpen)
+        {
+
+            // save pdf document
+            doc.Save(outputStream);
+
+            // close pdf document
+            if (leaveStreamOpen)
+            {
+                doc.DetachStream();
+            }
+            else
+            {
+                doc.Close();
+            }
+        }
+        private static PdfDocument GetPDF(HtmlToPdf converter, string htmlInput, string header, string footer)
         {
             converter.Footer.DisplayOnFirstPage = true;
             converter.Footer.DisplayOnOddPages = true;
@@ -102,17 +162,9 @@ namespace ObeTools
             };
             converter.Footer.Add(text);
 
-            PdfDocument doc = converter.ConvertHtmlString(htmlInput, "");
-            if (File.Exists(outputPath))
-            {
-                File.Delete(outputPath);
-            }
-
-            // save pdf document
-            doc.Save(outputPath);
-            // close pdf document
-            doc.Close();
+            return converter.ConvertHtmlString(htmlInput, "");
         }
+
         #endregion
 
 
