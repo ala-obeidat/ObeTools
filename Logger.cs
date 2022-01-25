@@ -41,8 +41,14 @@ namespace ObeTools
         #region Helper
         private static void WriteToFile(string logName, string logDirectory, string logType, string text)
         {
-            var filePath = GetLogFilePath(logName, logDirectory, logType);
-            File.AppendAllText(filePath, text);
+            try
+            {
+                var filePath = GetLogFilePath(logName, logDirectory, logType);
+                using StreamWriter writer = File.AppendText(filePath);
+                writer.WriteLine(text);
+            }
+            catch { }
+
         }
         private static string GetLogFilePath(string logName, string logDirectory, string logType)
         {
