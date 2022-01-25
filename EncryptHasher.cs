@@ -31,6 +31,11 @@ namespace ObeTools
             var base64String = Convert.ToBase64String(Encoding.UTF8.GetBytes(input));
             return base64String.ToSafeBase64String();
         }
+        public static string ToSafeBase64(byte[] input)
+        {
+            var base64String = Convert.ToBase64String(input);
+            return base64String.ToSafeBase64String();
+        }
         public static string FromSafeBase64(string input)
         {
             char[] result = new char[input.Length];
