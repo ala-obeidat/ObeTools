@@ -26,6 +26,11 @@ namespace ObeTools
         #endregion
 
         #region Method
+        public static string ToSafeBase64(char[] input)
+        {
+            var base64String = Convert.ToBase64String(Encoding.UTF8.GetBytes(input));
+            return base64String.ToSafeBase64String();
+        }
         public static string FromSafeBase64(string input)
         {
             char[] result = new char[input.Length];
@@ -138,11 +143,7 @@ namespace ObeTools
         #endregion
 
         #region Helper
-        private static string ToSafeBase64(char[] input)
-        {
-            var base64String = Convert.ToBase64String(Encoding.UTF8.GetBytes(input));
-            return base64String.ToSafeBase64String();
-        }
+
 
         #endregion
     }
