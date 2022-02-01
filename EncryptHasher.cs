@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace ObeTools
@@ -26,6 +27,17 @@ namespace ObeTools
         #endregion
 
         #region Method
+
+        public static T FromURLToken<T>(this string input)
+        {
+            return JsonSerializer.Deserialize<T>(Decrypt(input));
+        }
+        public static string ToURLToken<T>(this T input)
+        {
+            return Encrypt(JsonSerializer.Serialize(input));
+        }
+
+
         public static string ToSafeBase64(char[] input)
         {
             var base64String = Convert.ToBase64String(Encoding.UTF8.GetBytes(input));
@@ -141,6 +153,61 @@ namespace ObeTools
             return BitConverter.ToString(computedHash).Replace("-", "");
         }
 
+        /// <summary>
+        /// Get Hash of string (Hmac sha 256)
+        /// </summary>
+        /// <param name="input">String to get hash for it</param>
+        /// <param name="secret">key string for secret hash</param>
+        /// <returns>[input] hash</returns>
+        public static string HashHmacSha256(string input, string secret)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            byte[] bytes = Encoding.UTF8.GetBytes(input);
+            byte[] key = Encoding.UTF8.GetBytes(secret);
+            using HMACSHA256 hmac = new HMACSHA256(key);
+            byte[] computedHash = hmac.ComputeHash(bytes);
+            return BitConverter.ToString(computedHash).Replace("-", "");
+        }
+
+        /// <summary>
+        /// Get Hash of string (sha 512)
+        /// </summary>
+        /// <param name="input">String to get hash for it</param>
+        /// <returns>[input] hash</returns>
+        public static string HashSha512(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            byte[] bytes = Encoding.UTF8.GetBytes(input);
+            using SHA512Managed hmac = new SHA512Managed();
+            byte[] computedHash = hmac.ComputeHash(bytes);
+            return BitConverter.ToString(computedHash).Replace("-", "");
+        }
+
+        /// <summary>
+        /// Get Hash of string (sha 256)
+        /// </summary>
+        /// <param name="input">String to get hash for it</param>
+        /// <returns>[input] hash</returns>
+        public static string HashSha256(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            byte[] bytes = Encoding.UTF8.GetBytes(input);
+            using var hmac = new SHA256Managed();
+            byte[] computedHash = hmac.ComputeHash(bytes);
+            return BitConverter.ToString(computedHash).Replace("-", "");
+        }
         public static string RemoveJavaScript(string data)
         {
             return Regex.Replace(data, "<.*?>", string.Empty).Trim();
