@@ -216,10 +216,21 @@ namespace ObeTools
         {
             return Random.Next(Convert.ToInt32(Math.Pow(10, digit)), Convert.ToInt32(Math.Pow(10, digit + 1) - 1));
         }
+        public static string CustomEncrypt(string input, string salt)
+        {
+            int length = input.Length;
+            int halflength = length / 2;
+            return ReverseString($"{input[..halflength]}_{salt}{Key.Substring(length, length)}_{input.Substring(halflength, halflength)}");
+        }
         #endregion
 
         #region Helper
-
+        private static string ReverseString(string input)
+        {
+            char[] charArray = input.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
 
         #endregion
     }
