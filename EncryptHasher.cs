@@ -212,6 +212,10 @@ namespace ObeTools
         {
             return Regex.Replace(data, "<.*?>", string.Empty).Trim();
         }
+        public static int GenerateRandomNumber(int digit)
+        {
+            return Random.Next(Convert.ToInt32(Math.Pow(10, digit)), Convert.ToInt32(Math.Pow(10, digit + 1) - 1));
+        }
         #endregion
 
         #region Helper
