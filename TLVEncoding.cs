@@ -6,9 +6,18 @@ using System.Text.RegularExpressions;
 
 namespace ObeTools
 {
+    /// <summary>
+    /// Tag length value encoding helper (support UTF8)
+    /// </summary>
     public static class TLVEncoding
     {
         #region Methods
+
+        /// <summary>
+        /// Decode TLV bytes to dictionary of tag,data
+        /// </summary>
+        /// <param name="data">TLV encoded bytes</param>
+        /// <returns>Dictionary of tag number and value</returns>
         public static Dictionary<int, string> Decode(byte[] data)
         {
             Dictionary<int, string> result = null;
@@ -19,6 +28,12 @@ namespace ObeTools
             }
             return result;
         }
+
+        /// <summary>
+        /// Encode dictionary of tag,data to TLV bytes
+        /// </summary>
+        /// <param name="tagValues">Dictionary of tag number and value</param>
+        /// <returns>TLV encoded bytes</returns>
         public static byte[] Encode(Dictionary<int, string> tagValues)
         {
             if (tagValues == null || tagValues.Count == 0)
@@ -28,7 +43,7 @@ namespace ObeTools
             var data = new StringBuilder();
             foreach (var tagValue in tagValues)
             {
-                data.Append(GetTagValue(tagValue));
+                _ = data.Append(GetTagValue(tagValue));
             }
             return HexStringToHexBytes(data.ToString());
         }
@@ -99,7 +114,7 @@ namespace ObeTools
             var bytes = Encoding.UTF8.GetBytes(value);
             foreach (var t in bytes)
             {
-                sb.Append(t.ToString("X2"));
+                _ = sb.Append(t.ToString("X2"));
             }
             return sb.ToString();
         }

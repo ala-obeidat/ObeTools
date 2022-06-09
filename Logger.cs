@@ -9,9 +9,20 @@ using System.Text.Json;
 
 namespace ObeTools
 {
+    /// <summary>
+    /// Nice and simple thread safe text logger
+    /// </summary>
     public static class Logger
     {
         #region Method
+        /// <summary>
+        /// Log exception to text file (with date and time)
+        /// </summary>
+        /// <param name="logName">Log file name</param>
+        /// <param name="logDirectory">Log file path</param>
+        /// <param name="e">Exception to be logged</param>
+        /// <param name="caption">Optional title for this exception</param>
+        /// <returns>Exception message</returns>
         public static string LogException(string logName, string logDirectory, Exception e, string caption = "")
         {
             try
@@ -22,6 +33,16 @@ namespace ObeTools
             }
             catch { return string.Empty; }
         }
+
+        /// <summary>
+        /// Log information to text file (with date and time)
+        /// </summary>
+        /// <typeparam name="T">Type of object data to be logged</typeparam>
+        /// <param name="logName">Log file name</param>
+        /// <param name="logDirectory">Log file path</param>
+        /// <param name="caption">title for this information</param>
+        /// <param name="data">object data to be serilized</param>
+        /// <param name="method">Method name</param>
         public static void LogInfo<T>(string logName, string logDirectory, string caption, T data, string method)
         {
             try
@@ -54,7 +75,7 @@ namespace ObeTools
         {
             if (!Directory.Exists(logDirectory))
             {
-                Directory.CreateDirectory(logDirectory);
+                _ = Directory.CreateDirectory(logDirectory);
             }
             var logFilePath = $"{logName} {DateTime.Now:yyyy-MM-dd} - {logType}.txt";
             return Path.Combine(logDirectory, logFilePath);
@@ -69,11 +90,11 @@ namespace ObeTools
             {
                 if (string.IsNullOrEmpty(temp.Source))
                 {
-                    message.Append(temp.Message);
+                    _ = message.Append(temp.Message);
                 }
                 else
                 {
-                    message.Append($"{temp.Message} ({temp.Source})");
+                    _ = message.Append($"{temp.Message} ({temp.Source})");
                 }
 
                 if (temp.InnerException == null)

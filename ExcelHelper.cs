@@ -10,10 +10,21 @@ using System.Text.RegularExpressions;
 
 namespace ObeTools
 {
+    /// <summary>
+    /// Write/read data from/to excel file
+    /// </summary>
     public static class ExcelHelper
     {
 
         #region Methods
+
+        /// <summary>
+        /// Create modren excel file (xlsx)
+        /// </summary>
+        /// <param name="excelFileStream">Output stream to write excel file on it</param>
+        /// <param name="sheetName">Excel sheet name</param>
+        /// <param name="headers">Title first row</param>
+        /// <param name="data">Rows Data</param>
         public static void CreateExcel(Stream excelFileStream, string sheetName, List<string> headers, List<string[]> data)
         {
             var excelPackage = GetPackage(excelFileStream);
@@ -92,9 +103,9 @@ namespace ObeTools
                     string[] subStrings = new string[totalcols];
                     for (int j = 1; j <= totalcols; j++)
                     {
-                        subStrings[j - 1] = ((osheet.Cells[i, j].Value == null) ? string.Empty : osheet.Cells[i, j].Value.ToString());
+                        subStrings[j - 1] = (osheet.Cells[i, j].Value == null) ? string.Empty : osheet.Cells[i, j].Value.ToString();
                     }
-                    if (!removeEmptyRows || (subStrings.Any(x => !string.IsNullOrEmpty(x))))
+                    if (!removeEmptyRows || subStrings.Any(x => !string.IsNullOrEmpty(x)))
                     {
                         pageStrings.Add(subStrings);
                     }
@@ -152,7 +163,7 @@ namespace ObeTools
                             month = Convert.ToInt32(dateInfo[0]);
                             day = Convert.ToInt32(dateInfo[1]);
                         }
-                        testDate = new DateTime(Convert.ToInt32(dateInfo[2].Substring(0, 4)), month, day);
+                        testDate = new DateTime(Convert.ToInt32(dateInfo[2][..4]), month, day);
                     }
                 }
                 catch { }

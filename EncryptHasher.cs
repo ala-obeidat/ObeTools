@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 
 namespace ObeTools
 {
+    /// <summary>
+    /// Encrypt and Hashing.
+    /// </summary>
     public static class EncryptHasher
     {
         #region Variable
@@ -28,26 +31,55 @@ namespace ObeTools
 
         #region Method
 
+        /// <summary>
+        /// Get object from encrypted serialized string.
+        /// </summary>
+        /// <typeparam name="T">Object type</typeparam>
+        /// <param name="input">serialized string</param>
+        /// <returns>Object of type [T]</returns>
         public static T FromURLToken<T>(this string input)
         {
             return JsonSerializer.Deserialize<T>(Decrypt(input));
         }
+
+        /// <summary>
+        /// Convert object to encrypted serialized string.
+        /// </summary>
+        /// <typeparam name="T">Object type</typeparam>
+        /// <param name="input">Object data to be serialized</param>
+        /// <returns>encrypted serialized string</returns>
         public static string ToURLToken<T>(this T input)
         {
             return Encrypt(JsonSerializer.Serialize(input));
         }
 
-
+        /// <summary>
+        /// Convert Array of characturs to safe(url encoding) base64
+        /// </summary>
+        /// <param name="input">Array to be converted</param>
+        /// <returns>Safe base64 string</returns>
         public static string ToSafeBase64(char[] input)
         {
             var base64String = Convert.ToBase64String(Encoding.UTF8.GetBytes(input));
             return base64String.ToSafeBase64String();
         }
+
+        /// <summary>
+        /// Convert Array of bytes to safe(url encoding) base64
+        /// </summary>
+        /// <param name="input">Array to be converted</param>
+        /// <returns>Safe(url encoding) base64 string</returns>
         public static string ToSafeBase64(byte[] input)
         {
             var base64String = Convert.ToBase64String(input);
             return base64String.ToSafeBase64String();
         }
+
+        /// <summary>
+        /// Get flat string from safe(url encoding) base64 string
+        /// </summary>
+        /// <param name="input">safe base64 string</param>
+        /// <returns>flat string</returns>
         public static string FromSafeBase64(string input)
         {
             char[] result = new char[input.Length];
@@ -63,12 +95,18 @@ namespace ObeTools
             }
             return Encoding.UTF8.GetString(Convert.FromBase64String(new string(result)));
         }
-        public static string ToSafeBase64String(this string base64String)
+
+        /// <summary>
+        /// Convert base 64 string to safe(url encoding)
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>Safe(url encoding) base64 string</returns>
+        public static string ToSafeBase64String(this string input)
         {
-            char[] result = new char[base64String.Length];
+            char[] result = new char[input.Length];
             for (int k = 0; k < result.Length; k++)
             {
-                var tempChar = base64String[k];
+                var tempChar = input[k];
                 if (Base64Symbol.ContainsKey(tempChar))
                 {
                     tempChar = Base64Symbol[tempChar];
@@ -78,16 +116,22 @@ namespace ObeTools
             }
             return new string(result);
         }
-        public static string Encrypt(string str)
+
+        /// <summary>
+        /// Encrypt string by Obe method
+        /// </summary>
+        /// <param name="input">flat string</param>
+        /// <returns>encrypted string</returns>
+        public static string Encrypt(string input)
         {
-            if (string.IsNullOrEmpty(str))
+            if (string.IsNullOrEmpty(input))
             {
                 return string.Empty;
             }
             string str2 = Guid.NewGuid().ToString().Replace("-", "");
-            char[] chArray = new char[(str.Length * 2) + 4];
-            string str3 = string.Empty;
-            int num = Random.Next(0, 2502 - str.Length);
+            char[] chArray = new char[(input.Length * 2) + 4];
+            int num = Random.Next(0, 2502 - input.Length);
+            string str3;
             if (num < 10)
             {
                 str3 = "000" + num;
@@ -108,27 +152,33 @@ namespace ObeTools
             chArray[1] = (char)(str3[1] ^ 's');
             chArray[2] = (char)(str3[2] ^ 'e');
             chArray[3] = (char)(str3[3] ^ 'l');
-            for (int i = 0; i < str.Length; i++)
+            for (int i = 0; i < input.Length; i++)
             {
-                chArray[4 + (i * 2)] = (char)(str[i] ^ Key[num + i]);
+                chArray[4 + (i * 2)] = (char)(input[i] ^ Key[num + i]);
                 chArray[5 + (i * 2)] = str2[i % 30];
             }
             return ToSafeBase64(chArray);
         }
-        public static string Decrypt(string str)
+
+        /// <summary>
+        /// Decrypt string by Obe method
+        /// </summary>
+        /// <param name="input">encrypted string</param>
+        /// <returns>flat string</returns>
+        public static string Decrypt(string input)
         {
-            if (string.IsNullOrEmpty(str))
+            if (string.IsNullOrEmpty(input))
             {
                 return string.Empty;
             }
-            str = FromSafeBase64(str);
-            int num = (str.Length - 4) / 2;
-            char[] chArray = new char[] { (char)(str[0] ^ 'a'), (char)(str[1] ^ 's'), (char)(str[2] ^ 'e'), (char)(str[3] ^ 'l') };
+            input = FromSafeBase64(input);
+            int num = (input.Length - 4) / 2;
+            char[] chArray = new char[] { (char)(input[0] ^ 'a'), (char)(input[1] ^ 's'), (char)(input[2] ^ 'e'), (char)(input[3] ^ 'l') };
             char[] chArray2 = new char[num];
             int num2 = Convert.ToInt32(new string(chArray));
             for (int i = 0; i < num; i++)
             {
-                chArray2[i] = (char)(str[(i * 2) + 4] ^ Key[num2 + i]);
+                chArray2[i] = (char)(input[(i * 2) + 4] ^ Key[num2 + i]);
             }
             return new string(chArray2);
         }
@@ -208,20 +258,41 @@ namespace ObeTools
             byte[] computedHash = hmac.ComputeHash(bytes);
             return BitConverter.ToString(computedHash).Replace("-", "");
         }
+
+        /// <summary>
+        /// Remove scipt tags from string.
+        /// </summary>
+        /// <param name="data">html string</param>
+        /// <returns>safe string</returns>
         public static string RemoveJavaScript(string data)
         {
             return Regex.Replace(data, "<.*?>", string.Empty).Trim();
         }
+
+        /// <summary>
+        /// Get random number with spacific digits
+        /// </summary>
+        /// <param name="digit">Number of digits for random number</param>
+        /// <returns>Random number</returns>
         public static int GenerateRandomNumber(int digit)
         {
             return Random.Next(Convert.ToInt32(Math.Pow(10, digit)), Convert.ToInt32(Math.Pow(10, digit + 1) - 1));
         }
+
+        /// <summary>
+        /// Simple encrypt string with salt
+        /// </summary>
+        /// <param name="input">flat string</param>
+        /// <param name="salt">salt to be added to encrypted text</param>
+        /// <returns>encrypted text</returns>
         public static string CustomEncrypt(string input, string salt)
         {
             int length = input.Length;
             int halflength = length / 2;
             return ReverseString($"{input[..halflength]}_{salt}{Key.Substring(length, length)}_{input.Substring(halflength, halflength)}");
         }
+
+
         #endregion
 
         #region Helper
