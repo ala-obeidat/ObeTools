@@ -114,6 +114,12 @@ namespace ObeTools
             return pageStrings;
         }
 
+        /// <summary>
+        /// Get string value of excel cell
+        /// </summary>
+        /// <param name="data">array of cells</param>
+        /// <param name="index">array index</param>
+        /// <returns>string value</returns>
         public static string GetStringValue(string[] data, int index)
         {
             if (data.Length > index)
@@ -123,6 +129,13 @@ namespace ObeTools
 
             return null;
         }
+
+        /// <summary>
+        /// Get integer value of excel cell
+        /// </summary>
+        /// <param name="data">array of cells</param>
+        /// <param name="index">array index</param>
+        /// <returns>integer value</returns>
         public static int? GetIntValue(string[] data, int index)
         {
             if (data.Length > index)
@@ -135,6 +148,13 @@ namespace ObeTools
 
             return null;
         }
+
+        /// <summary>
+        /// Get datetime value of excel cell
+        /// </summary>
+        /// <param name="data">array of cells</param>
+        /// <param name="index">array index</param>
+        /// <returns>datetime value</returns>
         public static DateTime GetDateValue(string[] data, int index)
         {
             DateTime estimatedDate = DateTime.Now;
@@ -174,6 +194,14 @@ namespace ObeTools
             }
             return estimatedDate;
         }
+
+        /// <summary>
+        /// Get enum value of excel cell
+        /// </summary>
+        /// <param name="data">array of cells</param>
+        /// <param name="index">array index</param>
+        /// <param name="type">type of the enum</param>
+        /// <returns>enum value</returns>
         public static int GetIntEnum(string[] data, int index, Type type)
         {
             if (data.Length > index)

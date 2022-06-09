@@ -12,7 +12,9 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.3.2</Version>
+    <Version>1.3.3</Version>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
