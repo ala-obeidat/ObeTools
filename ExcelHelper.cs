@@ -1,4 +1,6 @@
-﻿using OfficeOpenXml;
+﻿using ObeTools.Model;
+
+using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
 using System;
@@ -25,7 +27,20 @@ namespace ObeTools
         /// <param name="sheetName">Excel sheet name</param>
         /// <param name="headers">Title first row</param>
         /// <param name="data">Rows Data</param>
-        public static void CreateExcel(Stream excelFileStream, string sheetName, List<string> headers, List<string[]> data)
+        /// <param name="titleDesign">[Optinal parameter] to design title(header)
+        /// with default value: 
+        ///  Font.Bold = true;
+        ///  Font.Color.SetColor(Color.White);
+        ///  WrapText=true;
+        ///  Border.Right.Style = ExcelBorderStyle.Thick;
+        ///  Border.Top.Style = ExcelBorderStyle.Thick;
+        ///  Border.Left.Style = ExcelBorderStyle.Thick;
+        ///  Border.Bottom.Style = ExcelBorderStyle.Thick;
+        ///  Fill.PatternType = ExcelFillStyle.Solid;
+        ///  Fill.BackgroundColor.SetColor(Color.DarkBlue);
+        /// </param>
+        /// <param name="dataDesign">[Optinal parameter] to design body(data)</param>
+        public static void CreateExcel(Stream excelFileStream, string sheetName, List<string> headers, List<string[]> data, ExcelDesign titleDesign = null, ExcelDesign dataDesign = null)
         {
             var excelPackage = GetPackage(excelFileStream);
 
@@ -49,18 +64,89 @@ namespace ObeTools
             //Ok now format the values;
             using (var range = worksheet.Cells[1, 1, 1, headers.Count])
             {
-                range.Style.Font.Bold = true;
-                range.Style.Border.Right.Style = ExcelBorderStyle.Thick;
-                range.Style.Border.Top.Style = ExcelBorderStyle.Thick;
-                range.Style.Border.Left.Style = ExcelBorderStyle.Thick;
-                range.Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
-                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                range.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-                range.Style.Font.Color.SetColor(Color.White);
+                if (titleDesign is null)
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.Border.Right.Style = ExcelBorderStyle.Thick;
+                    range.Style.Border.Top.Style = ExcelBorderStyle.Thick;
+                    range.Style.Border.Left.Style = ExcelBorderStyle.Thick;
+                    range.Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
+                    range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
+                    range.Style.Font.Color.SetColor(Color.White);
+                    range.Style.WrapText = true;
+                }
+                else
+                {
+                    if (titleDesign.Font != null)
+                    {
+                        range.Style.Font = titleDesign.Font;
+                    }
+                    if (titleDesign.Border != null)
+                    {
+                        range.Style.Border = titleDesign.Border;
+                    }
+                    if (titleDesign.Fill != null)
+                    {
+                        range.Style.Fill = titleDesign.Fill;
+                    }
+                    if (titleDesign.Numberformat != null)
+                    {
+                        range.Style.Numberformat = titleDesign.Numberformat;
+                    }
+                    range.Style.WrapText = titleDesign.WrapText;
+                    range.Style.QuotePrefix = titleDesign.QuotePrefix;
+                    range.Style.TextRotation = titleDesign.TextRotation;
+                    range.Style.Hidden = titleDesign.Hidden;
+                    range.Style.HorizontalAlignment = titleDesign.HorizontalAlignment;
+                    range.Style.Indent = titleDesign.Indent;
+                    range.Style.Locked = titleDesign.Locked;
+                    range.Style.ReadingOrder = titleDesign.ReadingOrder;
+                    range.Style.ShrinkToFit = titleDesign.ShrinkToFit;
+                    range.Style.VerticalAlignment = titleDesign.VerticalAlignment;
+                }
 
                 //Create an autofilter for the range
                 range.AutoFitColumns(0);
             }
+
+            if (dataDesign != null)
+            {
+                //Ok now format the values;
+                using var range = worksheet.Cells[2, 1, data.Count - 1, headers.Count];
+
+                if (dataDesign.Font != null)
+                {
+                    range.Style.Font = dataDesign.Font;
+                }
+                if (dataDesign.Border != null)
+                {
+                    range.Style.Border = dataDesign.Border;
+                }
+                if (dataDesign.Fill != null)
+                {
+                    range.Style.Fill = dataDesign.Fill;
+                }
+                if (dataDesign.Numberformat != null)
+                {
+                    range.Style.Numberformat = dataDesign.Numberformat;
+                }
+                range.Style.WrapText = dataDesign.WrapText;
+                range.Style.QuotePrefix = dataDesign.QuotePrefix;
+                range.Style.TextRotation = dataDesign.TextRotation;
+                range.Style.Hidden = dataDesign.Hidden;
+                range.Style.HorizontalAlignment = dataDesign.HorizontalAlignment;
+                range.Style.Indent = dataDesign.Indent;
+                range.Style.Locked = dataDesign.Locked;
+                range.Style.ReadingOrder = dataDesign.ReadingOrder;
+                range.Style.ShrinkToFit = dataDesign.ShrinkToFit;
+                range.Style.VerticalAlignment = dataDesign.VerticalAlignment;
+
+                //Create an autofilter for the range
+                range.AutoFitColumns(0);
+
+            }
+
             worksheet.HeaderFooter.OddHeader.CenteredText = "&24&U&\"Arial,Regular Bold\"" + sheetName;
             // add the page number to the footer plus the total number of pages
             worksheet.HeaderFooter.OddFooter.RightAlignedText =
