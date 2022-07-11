@@ -1,14 +1,14 @@
-﻿using ObeTools.Model;
-
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using ObeTools.Model;
+
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace ObeTools
 {
@@ -74,7 +74,6 @@ namespace ObeTools
                     range.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     range.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
                     range.Style.Font.Color.SetColor(Color.White);
-                    range.Style.WrapText = true;
                 }
                 else
                 {
@@ -94,7 +93,6 @@ namespace ObeTools
                     {
                         range.Style.Numberformat = titleDesign.Numberformat;
                     }
-                    range.Style.WrapText = titleDesign.WrapText;
                     range.Style.QuotePrefix = titleDesign.QuotePrefix;
                     range.Style.TextRotation = titleDesign.TextRotation;
                     range.Style.Hidden = titleDesign.Hidden;
@@ -131,7 +129,6 @@ namespace ObeTools
                 {
                     range.Style.Numberformat = dataDesign.Numberformat;
                 }
-                range.Style.WrapText = dataDesign.WrapText;
                 range.Style.QuotePrefix = dataDesign.QuotePrefix;
                 range.Style.TextRotation = dataDesign.TextRotation;
                 range.Style.Hidden = dataDesign.Hidden;

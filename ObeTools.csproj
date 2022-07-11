@@ -12,15 +12,15 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.3.4</Version>
+    <Version>1.3.5</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Excel;TLV;LOG;Encrypt;Hash</PackageTags>
-    <PackageReleaseNotes>Add design to create excel file</PackageReleaseNotes>
+    <PackageReleaseNotes>Fix excel file wrap text</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="C:\Users\ala_w\Desktop\Personal\me.png">
+    <None Include="F:\GitHup\ObeTools\me.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -31,6 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="me.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

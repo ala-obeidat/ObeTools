@@ -41,11 +41,6 @@ namespace ObeTools.Model
         public ExcelVerticalAlignment VerticalAlignment
         { get; set; }
 
-        /// <summary>
-        /// Wrap the text
-        /// </summary>
-        public bool WrapText
-        { get; set; }
 
         /// <summary>
         /// Readingorder RTL or LTR
