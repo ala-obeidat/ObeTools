@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.3.5</Version>
+    <Version>1.3.6</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Excel;TLV;LOG;Encrypt;Hash</PackageTags>
-    <PackageReleaseNotes>Fix excel file wrap text</PackageReleaseNotes>
+    <PackageReleaseNotes>Add File Helper</PackageReleaseNotes>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
