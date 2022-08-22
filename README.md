@@ -10,3 +10,4 @@ It contains my hole experience (which 8+ years) to optimize and collect what I n
   - 4 => RoundDouble: Round double ex: if x=2.55455444; so round(x,2) =>2.55
   - 5 => TLVEncoding: Tag length value encoding helper (support UTF8)
   - 6 => VATHelper: Calculate VAT taxes
+  - 7 => FileHelper: Get information about files from content base64
