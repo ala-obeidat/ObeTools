@@ -11,3 +11,4 @@ It contains my hole experience (which 8+ years) to optimize and collect what I n
   - 5 => TLVEncoding: Tag length value encoding helper (support UTF8)
   - 6 => VATHelper: Calculate VAT taxes
   - 7 => FileHelper: Get information about files from content base64
+  - 8 => NumberHelper: Convert number to words.
