@@ -25,7 +25,28 @@ namespace ObeTools
         public static string NumberToWords(double number, NumberWordType type)
         {
             var space = " ";
-            if (type != NumberWordType.English)
+            if (type == NumberWordType.All)
+            {
+                var convert = ConvertToWords(number.ToString(), type).Split("<br>");
+                var englihsConvert = convert[0].Replace(" ", space)
+                    .Replace("-", " ")
+                .Replace("point Saudi Riyal", "Saudi Riyal");
+                space = " و";
+                var arabicConvert = convert[1]
+                    .Replace("واحد#", "")
+                    .Replace(" ", space)
+                    .Replace("-", " ")
+                    .Replace("#", " ")
+                    .Replace("إثنان مئة", "مئتين")
+                    .Replace("إثنان ألف", "ألفين")
+                    .Replace("إثنان مليون", "مليونين")
+                    .Replace("إثنان مليار", "مليارين")
+                    .Replace("فاصلة  ريال سعودي", "ريال سعودي");
+                return $"{englihsConvert} <br>{arabicConvert}";
+
+            }
+
+            if (type == NumberWordType.Arabic)
             {
                 space = " و";
                 return ConvertToWords(number.ToString(), type)
@@ -37,13 +58,15 @@ namespace ObeTools
                     .Replace("إثنان ألف", "ألفين")
                     .Replace("إثنان مليون", "مليونين")
                     .Replace("إثنان مليار", "مليارين")
-                    .Replace("فاصلة ريال سعودي", "ريال سعودي")
-                    .Replace("point Saudi Riyal", "point Saudi Riyal");
+                    .Replace("فاصلة  ريال سعودي", "ريال سعودي")
+                    .Replace("point Saudi Riyal", "Saudi Riyal")
+                    .Replace("#", " ");
             }
 
             return ConvertToWords(number.ToString(), type)
                 .Replace(" ", space).Replace("-", " ")
-                .Replace("point Saudi Riyal", "point Saudi Riyal");
+                .Replace("point Saudi Riyal", "Saudi Riyal")
+                .Replace("فاصلة  ريال سعودي", "ريال سعودي");
         }
 
         /// <summary>
