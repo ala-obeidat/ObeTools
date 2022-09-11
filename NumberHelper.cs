@@ -25,7 +25,7 @@ namespace ObeTools
         public static string NumberToWords(double number, NumberWordType type)
         {
             var space = " ";
-            if (type == NumberWordType.Arabic)
+            if (type != NumberWordType.English)
             {
                 space = " و";
                 return ConvertToWords(number.ToString(), type)
@@ -36,10 +36,14 @@ namespace ObeTools
                     .Replace("إثنان مئة", "مئتين")
                     .Replace("إثنان ألف", "ألفين")
                     .Replace("إثنان مليون", "مليونين")
-                    .Replace("إثنان مليار", "مليارين");
+                    .Replace("إثنان مليار", "مليارين")
+                    .Replace("فاصلة ريال سعودي", "ريال سعودي")
+                    .Replace("point Saudi Riyal", "point Saudi Riyal");
             }
 
-            return ConvertToWords(number.ToString(), type).Replace(" ", space).Replace("-", " ");
+            return ConvertToWords(number.ToString(), type)
+                .Replace(" ", space).Replace("-", " ")
+                .Replace("point Saudi Riyal", "point Saudi Riyal");
         }
 
         /// <summary>
