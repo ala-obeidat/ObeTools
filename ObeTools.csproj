@@ -15,7 +15,7 @@
     <Version>1.4.0</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageTags>Excel;TLV;LOG;Encrypt;Hash</PackageTags>
+    <PackageTags>Excel;TLV;LOG;Encrypt;Hash;Number To Word;Arabic</PackageTags>
     <PackageReleaseNotes>Replace Round Dupple with Number helper</PackageReleaseNotes>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
