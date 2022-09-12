@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.3.9</Version>
+    <Version>1.4.0</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Excel;TLV;LOG;Encrypt;Hash</PackageTags>
-    <PackageReleaseNotes>Add Number helper</PackageReleaseNotes>
+    <PackageReleaseNotes>Replace Round Dupple with Number helper</PackageReleaseNotes>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 

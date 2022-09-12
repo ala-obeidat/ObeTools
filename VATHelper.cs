@@ -25,7 +25,7 @@
             {
                 result = inputRate / ((inputTaxRate / 100.0) + 1);
             }
-            return RoundDouble.Round(result, roundDigits);
+            return NumberHelper.Round(result, roundDigits);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@
                 sub = total / (1 + vatRate);
                 vat = total - sub;
             }
-            return (RoundDouble.Round(total, roundDigits), RoundDouble.Round(vat, roundDigits), RoundDouble.Round(sub, roundDigits));
+            return (NumberHelper.Round(total, roundDigits), NumberHelper.Round(vat, roundDigits), NumberHelper.Round(sub, roundDigits));
         }
         #endregion
 

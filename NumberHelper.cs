@@ -42,7 +42,7 @@ namespace ObeTools
                     .Replace("إثنان مليون", "مليونين")
                     .Replace("إثنان مليار", "مليارين")
                     .Replace("فاصلة  ريال سعودي", "ريال سعودي");
-                return $"{englihsConvert} <br>{arabicConvert}";
+                return $"{englihsConvert}<br>{arabicConvert}";
 
             }
 
@@ -137,7 +137,7 @@ namespace ObeTools
                         val = $"{ConvertWholeNumber(wholeNo, NumberWordType.Arabic)}-{andStrAr}-{pointStr}-{endStrAr}";
                         break;
                     case NumberWordType.All:
-                        val = $"{ConvertWholeNumber(wholeNo, NumberWordType.English)} {andStr}{pointStr} {endStr} <br> {ConvertWholeNumber(wholeNo, NumberWordType.Arabic)}-{andStrAr}-{secondPointStr}-{endStrAr}";
+                        val = $"{ConvertWholeNumber(wholeNo, NumberWordType.English)} {andStr}{pointStr} {endStr}<br>{ConvertWholeNumber(wholeNo, NumberWordType.Arabic)}-{andStrAr}-{secondPointStr}-{endStrAr}";
                         break;
                     default:
                         break;
