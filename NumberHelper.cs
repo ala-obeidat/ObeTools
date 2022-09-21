@@ -21,16 +21,26 @@ namespace ObeTools
         /// </summary>
         /// <param name="number">number in double format</param>
         /// <param name="type">words charectures language</param>
+        /// <param name="currencyAr">Currency Label in Arabi</param>
+        /// <param name="currencyEn">Currency Label in English</param>
         /// <returns></returns>
-        public static string NumberToWords(double number, NumberWordType type)
+        public static string NumberToWords(double number, NumberWordType type, string currencyAr, string currencyEn)
         {
+            string negativeAr = string.Empty;
+            string negativeEn = string.Empty;
+            if (number < 0)
+            {
+                number = number * -1;
+                negativeAr = "سالب";
+                negativeEn = "Minus";
+            }
             var space = " ";
             if (type == NumberWordType.All)
             {
                 var convert = ConvertToWords(number.ToString(), type).Split("<br>");
                 var englihsConvert = convert[0].Replace(" ", space)
                     .Replace("-", " ")
-                .Replace("point Saudi Riyal", "Saudi Riyal");
+                .Replace("point Saudi Riyal", currencyEn);
                 space = " و";
                 var arabicConvert = convert[1]
                     .Replace("واحد#", "")
@@ -41,15 +51,16 @@ namespace ObeTools
                     .Replace("إثنان ألف", "ألفين")
                     .Replace("إثنان مليون", "مليونين")
                     .Replace("إثنان مليار", "مليارين")
-                    .Replace("فاصلة  ريال سعودي", "ريال سعودي");
-                return $"{englihsConvert}<br>{arabicConvert}";
+                    .Replace("فاصلة  ريال سعودي", currencyAr)
+                    .Replace("فاصلة  و", "فاصلة ");
+                return $"{negativeEn} {englihsConvert}<br>{negativeAr} {arabicConvert}";
 
             }
 
             if (type == NumberWordType.Arabic)
             {
                 space = " و";
-                return ConvertToWords(number.ToString(), type)
+                return negativeAr + " " + ConvertToWords(number.ToString(), type)
                     .Replace("واحد#", "")
                     .Replace(" ", space)
                     .Replace("-", " ")
@@ -58,15 +69,16 @@ namespace ObeTools
                     .Replace("إثنان ألف", "ألفين")
                     .Replace("إثنان مليون", "مليونين")
                     .Replace("إثنان مليار", "مليارين")
-                    .Replace("فاصلة  ريال سعودي", "ريال سعودي")
-                    .Replace("point Saudi Riyal", "Saudi Riyal")
+                    .Replace("فاصلة  ريال سعودي", currencyAr)
+                    .Replace("point Saudi Riyal", currencyEn)
+                    .Replace("فاصلة  و", "فاصلة ")
                     .Replace("#", " ");
             }
 
-            return ConvertToWords(number.ToString(), type)
+            return negativeEn + " " + ConvertToWords(number.ToString(), type)
                 .Replace(" ", space).Replace("-", " ")
-                .Replace("point Saudi Riyal", "Saudi Riyal")
-                .Replace("فاصلة  ريال سعودي", "ريال سعودي");
+                .Replace("point Saudi Riyal", currencyEn)
+                .Replace("فاصلة  ريال سعودي", currencyAr);
         }
 
         /// <summary>
@@ -149,26 +161,21 @@ namespace ObeTools
         private static string ConvertDecimals(string number, NumberWordType numberWordType)
         {
             string cd = "", digit, engOne;
-            if (numberWordType == NumberWordType.Arabic)
+
+            for (int i = 0; i < number.Length; i++)
             {
-                return ConvertWholeNumber(number, numberWordType);
-            }
-            else
-            {
-                for (int i = 0; i < number.Length; i++)
+                digit = number[i].ToString();
+                if (digit.Equals("0"))
                 {
-                    digit = number[i].ToString();
-                    if (digit.Equals("0"))
-                    {
-                        engOne = "Zero";
-                    }
-                    else
-                    {
-                        engOne = Ones(digit, numberWordType);
-                    }
-                    cd += " " + engOne;
+                    engOne = numberWordType == NumberWordType.Arabic ? "صفر" : "Zero";
                 }
+                else
+                {
+                    engOne = Ones(digit, numberWordType);
+                }
+                cd += " " + engOne;
             }
+
 
             return cd;
         }
@@ -294,31 +301,31 @@ namespace ObeTools
                     name = numberWordType == NumberWordType.Arabic ? "عشرة" : "Ten";
                     break;
                 case 11:
-                    name = numberWordType == NumberWordType.Arabic ? "أحدى عشر" : "Eleven";
+                    name = numberWordType == NumberWordType.Arabic ? "إحدى-عشر" : "Eleven";
                     break;
                 case 12:
-                    name = numberWordType == NumberWordType.Arabic ? "إثنا عشر" : "Twelve";
+                    name = numberWordType == NumberWordType.Arabic ? "إثنا-عشر" : "Twelve";
                     break;
                 case 13:
-                    name = numberWordType == NumberWordType.Arabic ? "ثلاثة عشر" : "Thirteen";
+                    name = numberWordType == NumberWordType.Arabic ? "ثلاثة-عشر" : "Thirteen";
                     break;
                 case 14:
-                    name = numberWordType == NumberWordType.Arabic ? "أربعة عشر" : "Fourteen";
+                    name = numberWordType == NumberWordType.Arabic ? "أربعة-عشر" : "Fourteen";
                     break;
                 case 15:
-                    name = numberWordType == NumberWordType.Arabic ? "خمسة عشر" : "Fifteen";
+                    name = numberWordType == NumberWordType.Arabic ? "خمسة-عشر" : "Fifteen";
                     break;
                 case 16:
-                    name = numberWordType == NumberWordType.Arabic ? "ستة عشر" : "Sixteen";
+                    name = numberWordType == NumberWordType.Arabic ? "ستة-عشر" : "Sixteen";
                     break;
                 case 17:
-                    name = numberWordType == NumberWordType.Arabic ? "سبعة عشر" : "Seventeen";
+                    name = numberWordType == NumberWordType.Arabic ? "سبعة-عشر" : "Seventeen";
                     break;
                 case 18:
-                    name = numberWordType == NumberWordType.Arabic ? "ثمانية عشر" : "Eighteen";
+                    name = numberWordType == NumberWordType.Arabic ? "ثمانية-عشر" : "Eighteen";
                     break;
                 case 19:
-                    name = numberWordType == NumberWordType.Arabic ? "تسعة عشر" : "Nineteen";
+                    name = numberWordType == NumberWordType.Arabic ? "تسعة-عشر" : "Nineteen";
                     break;
                 case 20:
                     name = numberWordType == NumberWordType.Arabic ? "عشرون" : "Twenty";
