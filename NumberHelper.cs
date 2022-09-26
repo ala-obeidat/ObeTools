@@ -48,6 +48,8 @@ namespace ObeTools
                     .Replace("-", " ")
                     .Replace("#", " ")
                     .Replace("إثنان مئة", "مئتين")
+                    .Replace("ة مئة", "مائة")
+                    .Replace("يمائة", "مائة")
                     .Replace("إثنان ألف", "ألفين")
                     .Replace("إثنان مليون", "مليونين")
                     .Replace("إثنان مليار", "مليارين")
@@ -66,6 +68,8 @@ namespace ObeTools
                     .Replace("-", " ")
                     .Replace("#", " ")
                     .Replace("إثنان مئة", "مئتين")
+                    .Replace("ة مئة", "مائة")
+                    .Replace("يمائة", "مائة")
                     .Replace("إثنان ألف", "ألفين")
                     .Replace("إثنان مليون", "مليونين")
                     .Replace("إثنان مليار", "مليارين")
@@ -119,7 +123,8 @@ namespace ObeTools
         #region Helper
         private static string ConvertToWords(string numb, NumberWordType numberWordType)
         {
-            string val = "", wholeNo = numb, points, andStr = "point", andStrAr = "فاصلة", pointStr = "", secondPointStr = "", endStr = "Saudi Riyal", endStrAr = "ريال-سعودي";
+
+            string val = "", wholeNo = numb, points, andStr = "point", andStrAr = "فاصلة", pointStr = "", secondPointStr = "", endStr = "Saudi Riyal", endStrAr = "ريال-سعودي", words = "", words2 = "";
             try
             {
                 int decimalPlace = numb.IndexOf(".");
@@ -129,27 +134,34 @@ namespace ObeTools
                     points = numb[(decimalPlace + 1)..];
                     if (Convert.ToInt32(points) > 0)
                     {
-                        if (numberWordType == NumberWordType.All)
+                        if (numberWordType != NumberWordType.English)
                         {
-                            pointStr = ConvertDecimals(points, NumberWordType.English);
-                            secondPointStr = ConvertDecimals(points, NumberWordType.Arabic);
+                            secondPointStr = ConvertWholeNumber(points, NumberWordType.Arabic);
                         }
-                        else
-                        {
-                            pointStr = ConvertDecimals(points, numberWordType);
-                        }
+                        pointStr = ConvertDecimals(points);
                     }
                 }
+                if (numb == "0")
+                {
+                    words = "Zero";
+                    words2 = "صفر";
+                }
+                else
+                {
+                    words = ConvertWholeNumber(wholeNo, NumberWordType.English);
+                    words2 = ConvertWholeNumber(wholeNo, NumberWordType.Arabic);
+                }
+
                 switch (numberWordType)
                 {
                     case NumberWordType.English:
-                        val = $"{ConvertWholeNumber(wholeNo, NumberWordType.English)} {andStr}{pointStr} {endStr}";
+                        val = $"{words} {andStr}{pointStr} {endStr}";
                         break;
                     case NumberWordType.Arabic:
-                        val = $"{ConvertWholeNumber(wholeNo, NumberWordType.Arabic)}-{andStrAr}-{pointStr}-{endStrAr}";
+                        val = $"{words2}-{andStrAr}-{secondPointStr}-{endStrAr}";
                         break;
                     case NumberWordType.All:
-                        val = $"{ConvertWholeNumber(wholeNo, NumberWordType.English)} {andStr}{pointStr} {endStr}<br>{ConvertWholeNumber(wholeNo, NumberWordType.Arabic)}-{andStrAr}-{secondPointStr}-{endStrAr}";
+                        val = $"{words} {andStr}{pointStr} {endStr}<br>{words2}-{andStrAr}-{secondPointStr}-{endStrAr}";
                         break;
                     default:
                         break;
@@ -158,7 +170,7 @@ namespace ObeTools
             catch { }
             return val;
         }
-        private static string ConvertDecimals(string number, NumberWordType numberWordType)
+        private static string ConvertDecimals(string number)
         {
             string cd = "", digit, engOne;
 
@@ -167,11 +179,12 @@ namespace ObeTools
                 digit = number[i].ToString();
                 if (digit.Equals("0"))
                 {
-                    engOne = numberWordType == NumberWordType.Arabic ? "صفر" : "Zero";
+                    engOne = "Zero";
                 }
                 else
                 {
-                    engOne = Ones(digit, numberWordType);
+
+                    engOne = Ones(digit, NumberWordType.English);
                 }
                 cd += " " + engOne;
             }
