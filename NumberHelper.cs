@@ -194,10 +194,11 @@ namespace ObeTools
         }
         private static string ConvertWholeNumber(string Number, NumberWordType numberWordType)
         {
+            bool beginsZero = false;
             string word = "";
             try
             {
-                bool beginsZero = false;
+
                 bool isDone = false;
                 double dblAmt = (Convert.ToDouble(Number));
                 if (dblAmt > 0)
@@ -266,6 +267,10 @@ namespace ObeTools
                 }
             }
             catch { }
+            if (beginsZero)
+            {
+                return numberWordType == NumberWordType.Arabic ? $"صفر-{word.Trim()}" : $"Zero {word.Trim()}";
+            }
             return word.Trim();
         }
         private static string Ones(string Number, NumberWordType numberWordType)
