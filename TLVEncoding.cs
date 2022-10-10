@@ -20,7 +20,7 @@ namespace ObeTools
         /// <returns>Dictionary of tag number and value</returns>
         public static Dictionary<int, string> Decode(byte[] data)
         {
-            Dictionary<int, string> result = null;
+            Dictionary<int, string> result = new Dictionary<int, string>();
             if (data.Any())
             {
                 var hexString = HexStringFromHexBytes(data);
@@ -38,7 +38,7 @@ namespace ObeTools
         {
             if (tagValues == null || tagValues.Count == 0)
             {
-                return null;
+                return Array.Empty<byte>();
             }
             var data = new StringBuilder();
             foreach (var tagValue in tagValues)

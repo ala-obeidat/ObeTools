@@ -23,8 +23,10 @@ namespace ObeTools
         /// <param name="type">words charectures language</param>
         /// <param name="currencyAr">Currency Label in Arabi</param>
         /// <param name="currencyEn">Currency Label in English</param>
+        /// <param name="centLabelAr">Partial currency label in Arabic</param>
+        /// <param name="centLabelEn">Partial currency label in English</param>
         /// <returns></returns>
-        public static string NumberToWords(double number, NumberWordType type, string currencyAr, string currencyEn)
+        public static string NumberToWords(double number, NumberWordType type, string currencyAr, string currencyEn, string centLabelAr = "", string centLabelEn = "")
         {
             string negativeAr = string.Empty;
             string negativeEn = string.Empty;
@@ -37,10 +39,10 @@ namespace ObeTools
             var space = " ";
             if (type == NumberWordType.All)
             {
-                var convert = ConvertToWords(number.ToString(), type).Split("<br>");
+                var convert = ConvertToWords(number.ToString(), type, centLabelEn, centLabelAr).Split("<br>");
                 var englihsConvert = convert[0].Replace(" ", space)
-                    .Replace("-", " ")
-                .Replace("point Saudi Riyal", currencyEn);
+                    .Replace("-", " ").Replace("point", ", and ")
+                .Replace("Saudi Riyal", currencyEn);
                 space = " و";
                 var arabicConvert = convert[1]
                     .Replace("واحد#", "")
@@ -53,8 +55,9 @@ namespace ObeTools
                     .Replace("إثنان ألف", "ألفين")
                     .Replace("إثنان مليون", "مليونين")
                     .Replace("إثنان مليار", "مليارين")
-                    .Replace("فاصلة  ريال سعودي", currencyAr)
-                    .Replace("فاصلة  و", "فاصلة ");
+                    .Replace("ريال سعودي", currencyAr)
+                    .Replace("فاصلة  و", "فاصلة ")
+                    .Replace("فاصلة ", "، و");
                 return $"{negativeEn} {englihsConvert}<br>{negativeAr} {arabicConvert}";
 
             }
@@ -62,7 +65,7 @@ namespace ObeTools
             if (type == NumberWordType.Arabic)
             {
                 space = " و";
-                return negativeAr + " " + ConvertToWords(number.ToString(), type)
+                return negativeAr + " " + ConvertToWords(number.ToString(), type, centLabelEn, centLabelAr)
                     .Replace("واحد#", "")
                     .Replace(" ", space)
                     .Replace("-", " ")
@@ -73,16 +76,17 @@ namespace ObeTools
                     .Replace("إثنان ألف", "ألفين")
                     .Replace("إثنان مليون", "مليونين")
                     .Replace("إثنان مليار", "مليارين")
-                    .Replace("فاصلة  ريال سعودي", currencyAr)
-                    .Replace("point Saudi Riyal", currencyEn)
+                    .Replace("ريال سعودي", currencyAr)
+                    .Replace("Saudi Riyal", currencyEn)
                     .Replace("فاصلة  و", "فاصلة ")
+                    .Replace("فاصلة ", "، و")
                     .Replace("#", " ");
             }
 
-            return negativeEn + " " + ConvertToWords(number.ToString(), type)
-                .Replace(" ", space).Replace("-", " ")
-                .Replace("point Saudi Riyal", currencyEn)
-                .Replace("فاصلة  ريال سعودي", currencyAr);
+            return negativeEn + " " + ConvertToWords(number.ToString(), type, centLabelEn, centLabelAr)
+                .Replace(" ", space).Replace("-", " ").Replace("point", ", and ")
+                .Replace("Saudi Riyal", currencyEn)
+                .Replace("ريال سعودي", currencyAr);
         }
 
         /// <summary>
@@ -121,10 +125,20 @@ namespace ObeTools
         #endregion
 
         #region Helper
-        private static string ConvertToWords(string numb, NumberWordType numberWordType)
+        private static string ConvertToWords(string numb, NumberWordType numberWordType, string centLable = "", string centLableAr = "")
         {
 
-            string val = "", wholeNo = numb, points, andStr = "point", andStrAr = "فاصلة", pointStr = "", secondPointStr = "", endStr = "Saudi Riyal", endStrAr = "ريال-سعودي", words = "", words2 = "";
+            string val = "", wholeNo = numb, points, andStr = "point", andStrAr = "فاصلة",
+                pointStr = "", secondPointStr = "", endStr = "Saudi Riyal", endStrAr = "ريال-سعودي",
+                words, words2, centAr = "هللة", cent = "Halalah";
+            if (!string.IsNullOrEmpty(centLable))
+            {
+                cent = centLable;
+            }
+            if (!string.IsNullOrEmpty(centLableAr))
+            {
+                centAr = centLableAr;
+            }
             try
             {
                 int decimalPlace = numb.IndexOf(".");
@@ -138,7 +152,7 @@ namespace ObeTools
                         {
                             secondPointStr = ConvertWholeNumber(points, NumberWordType.Arabic);
                         }
-                        pointStr = ConvertDecimals(points);
+                        pointStr = ConvertWholeNumber(points, numberWordType);
                     }
                 }
                 if (numb == "0")
@@ -155,13 +169,45 @@ namespace ObeTools
                 switch (numberWordType)
                 {
                     case NumberWordType.English:
-                        val = $"{words} {andStr}{pointStr} {endStr}";
+                        if (string.IsNullOrEmpty(pointStr))
+                        {
+                            val = $"{words} {endStr}";
+                        }
+                        else
+                        {
+                            val = $"{words} {endStr} {andStr} {pointStr} {cent}";
+                        }
                         break;
                     case NumberWordType.Arabic:
-                        val = $"{words2}-{andStrAr}-{secondPointStr}-{endStrAr}";
+                        if (string.IsNullOrEmpty(secondPointStr))
+                        {
+                            val = $"{words2}-{endStrAr}";
+                        }
+                        else
+                        {
+                            val = $"{words2}-{endStrAr}-{andStrAr}-{secondPointStr}-{centAr}";
+                        }
                         break;
                     case NumberWordType.All:
-                        val = $"{words} {andStr}{pointStr} {endStr}<br>{words2}-{andStrAr}-{secondPointStr}-{endStrAr}";
+                        string valAr = "";
+                        string valEn = "";
+                        if (string.IsNullOrEmpty(pointStr))
+                        {
+                            valAr = $"{words} {endStr}";
+                        }
+                        else
+                        {
+                            valAr = $"{words} {endStr} {andStr} {pointStr} {cent}";
+                        }
+                        if (string.IsNullOrEmpty(secondPointStr))
+                        {
+                            valEn = $"{words2}-{endStrAr}";
+                        }
+                        else
+                        {
+                            valEn = $"{words2}-{endStrAr}-{andStrAr}-{secondPointStr}-{centAr}";
+                        }
+                        val = $"{valAr}<br>{valEn}";
                         break;
                     default:
                         break;
