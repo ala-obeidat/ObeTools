@@ -30,6 +30,7 @@ namespace ObeTools
         {
             string negativeAr = string.Empty;
             string negativeEn = string.Empty;
+
             if (number < 0)
             {
                 number = number * -1;
@@ -41,7 +42,7 @@ namespace ObeTools
             {
                 var convert = ConvertToWords(number.ToString(), type, centLabelEn, centLabelAr).Split("<br>");
                 var englihsConvert = convert[0].Replace(" ", space)
-                    .Replace("-", " ").Replace("point", ", and ")
+                    .Replace("-", " ").Replace("point", " and ")
                 .Replace("Saudi Riyal", currencyEn);
                 space = " و";
                 var arabicConvert = convert[1]
@@ -57,7 +58,7 @@ namespace ObeTools
                     .Replace("إثنان مليار", "مليارين")
                     .Replace("ريال سعودي", currencyAr)
                     .Replace("فاصلة  و", "فاصلة ")
-                    .Replace("فاصلة ", "، و");
+                    .Replace("فاصلة ", " و");
                 return $"{negativeEn} {englihsConvert}<br>{negativeAr} {arabicConvert}";
 
             }
@@ -79,12 +80,12 @@ namespace ObeTools
                     .Replace("ريال سعودي", currencyAr)
                     .Replace("Saudi Riyal", currencyEn)
                     .Replace("فاصلة  و", "فاصلة ")
-                    .Replace("فاصلة ", "، و")
+                    .Replace("فاصلة ", " و")
                     .Replace("#", " ");
             }
 
             return negativeEn + " " + ConvertToWords(number.ToString(), type, centLabelEn, centLabelAr)
-                .Replace(" ", space).Replace("-", " ").Replace("point", ", and ")
+                .Replace(" ", space).Replace("-", " ").Replace("point", " and ")
                 .Replace("Saudi Riyal", currencyEn)
                 .Replace("ريال سعودي", currencyAr);
         }
@@ -144,6 +145,7 @@ namespace ObeTools
                 int decimalPlace = numb.IndexOf(".");
                 if (decimalPlace > 0)
                 {
+                    numb = string.Format("{0:0.00}", Round(Convert.ToDouble(numb), 2));
                     wholeNo = numb[..decimalPlace];
                     points = numb[(decimalPlace + 1)..];
                     if (Convert.ToInt32(points) > 0)
@@ -246,7 +248,7 @@ namespace ObeTools
             {
 
                 bool isDone = false;
-                double dblAmt = (Convert.ToDouble(Number));
+                double dblAmt = Convert.ToDouble(Number);
                 if (dblAmt > 0)
                 {
                     beginsZero = Number.StartsWith("0");
