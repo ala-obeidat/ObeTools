@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.4.5</Version>
+    <Version>1.4.6</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Excel;TLV;LOG;Encrypt;Hash;Number To Word;Arabic</PackageTags>
-    <PackageReleaseNotes>Fix one digit after point in number to words converter</PackageReleaseNotes>
+    <PackageReleaseNotes>Add Right To Left option to create excel</PackageReleaseNotes>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 

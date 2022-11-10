@@ -40,7 +40,8 @@ namespace ObeTools
         ///  Fill.BackgroundColor.SetColor(Color.DarkBlue);
         /// </param>
         /// <param name="dataDesign">[Optinal parameter] to design body(data)</param>
-        public static void CreateExcel(Stream excelFileStream, string sheetName, List<string> headers, List<string[]> data, ExcelDesign titleDesign = null, ExcelDesign dataDesign = null)
+        /// <param name="rightToLeft">[Default is false] Right to left layout</param>
+        public static void CreateExcel(Stream excelFileStream, string sheetName, List<string> headers, List<string[]> data, ExcelDesign titleDesign = null, ExcelDesign dataDesign = null, bool rightToLeft = false)
         {
             var excelPackage = GetPackage(excelFileStream);
 
@@ -143,7 +144,7 @@ namespace ObeTools
                 range.AutoFitColumns(0);
 
             }
-
+            worksheet.View.RightToLeft = rightToLeft;
             worksheet.HeaderFooter.OddHeader.CenteredText = "&24&U&\"Arial,Regular Bold\"" + sheetName;
             // add the page number to the footer plus the total number of pages
             worksheet.HeaderFooter.OddFooter.RightAlignedText =
