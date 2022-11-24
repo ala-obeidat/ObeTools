@@ -16,6 +16,23 @@
         /// <param name="inputRate">price</param>
         /// <param name="inputTaxRate">tax pecentage</param>
         /// <param name="rateIncludeVAT">If price include VAT or not</param>
+        /// <returns>Rate price</returns>
+        public static double GetItemRate(double inputRate, double inputTaxRate, bool rateIncludeVAT)
+        {
+            var result = inputRate;
+            if (rateIncludeVAT)
+            {
+                result = inputRate / ((inputTaxRate / 100.0) + 1);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get rate price after apply taxes
+        /// </summary>
+        /// <param name="inputRate">price</param>
+        /// <param name="inputTaxRate">tax pecentage</param>
+        /// <param name="rateIncludeVAT">If price include VAT or not</param>
         /// <param name="roundDigits">How many digits after . to return</param>
         /// <returns>Rate price</returns>
         public static double GetItemRate(double inputRate, double inputTaxRate, bool rateIncludeVAT, int roundDigits)
