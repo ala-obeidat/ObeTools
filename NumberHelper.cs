@@ -227,6 +227,7 @@ namespace ObeTools
                 digit = number[i].ToString();
                 if (digit.Equals("0"))
                 {
+
                     engOne = "Zero";
                 }
                 else
@@ -317,7 +318,7 @@ namespace ObeTools
             catch { }
             if (beginsZero)
             {
-                return numberWordType == NumberWordType.Arabic ? $"صفر-{word.Trim()}" : $"Zero {word.Trim()}";
+                return numberWordType == NumberWordType.Arabic ? $"{word.Trim()}" : $"{word.Trim()}";
             }
             return word.Trim();
         }

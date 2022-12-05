@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.4.7</Version>
+    <Version>1.4.8</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Excel;TLV;LOG;Encrypt;Hash;Number To Word;Arabic</PackageTags>
-    <PackageReleaseNotes>Remove Round from GetItemRate</PackageReleaseNotes>
+    <PackageReleaseNotes>Fix number to words issue (Zero)</PackageReleaseNotes>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
