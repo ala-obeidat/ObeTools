@@ -58,7 +58,15 @@ namespace ObeTools
                     .Replace("إثنان مليار", "مليارين")
                     .Replace("ريال سعودي", currencyAr)
                     .Replace("فاصلة  و", "فاصلة ")
-                    .Replace("فاصلة ", " و");
+                    .Replace("فاصلة ", " و")
+                    .Replace("ثلاثة ألف", "ثلاثة آلاف")
+                    .Replace("أربعة ألف", "أربعة آلاف")
+                    .Replace("خمسة ألف", "خمسة آلاف")
+                    .Replace("ستة ألف", "ستة آلاف")
+                    .Replace("سبعة ألف", "سبعة آلاف")
+                    .Replace("ثمنية ألف", "ثمانية آلاف")
+                    .Replace("تسعة ألف", "تسعة آلاف")
+                    .Replace("عشرة ألف", "عشرة آلاف");
                 return $"{negativeEn} {englihsConvert}<br>{negativeAr} {arabicConvert}";
 
             }
@@ -81,6 +89,15 @@ namespace ObeTools
                     .Replace("Saudi Riyal", currencyEn)
                     .Replace("فاصلة  و", "فاصلة ")
                     .Replace("فاصلة ", " و")
+
+                    .Replace("ثلاثة ألف", "ثلاثة آلاف")
+                    .Replace("أربعة ألف", "أربعة آلاف")
+                    .Replace("خمسة ألف", "خمسة آلاف")
+                    .Replace("ستة ألف", "ستة آلاف")
+                    .Replace("سبعة ألف", "سبعة آلاف")
+                    .Replace("ثمنية ألف", "ثمانية آلاف")
+                    .Replace("تسعة ألف", "تسعة آلاف")
+                    .Replace("عشرة ألف", "عشرة آلاف")
                     .Replace("#", " ");
             }
 
