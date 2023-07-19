@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 using ObeTools.Model;
 
@@ -58,7 +56,8 @@ namespace ObeTools
             {
                 for (int q = 0; q < data[i].Length; q++)
                 {
-                    worksheet.Cells[i + 2, q + 1].Value = CheckData(data[i][q]);
+                    worksheet.Cells[i + 2, q + 1].Value = data[i][q];
+                    worksheet.Cells[i + 2, q + 1].IsRichText = true;
                 }
             }
 
@@ -198,126 +197,17 @@ namespace ObeTools
             return pageStrings;
         }
 
-        /// <summary>
-        /// Get string value of excel cell
-        /// </summary>
-        /// <param name="data">array of cells</param>
-        /// <param name="index">array index</param>
-        /// <returns>string value</returns>
-        public static string GetStringValue(string[] data, int index)
-        {
-            if (data.Length > index)
-            {
-                return data[index];
-            }
 
-            return null;
-        }
 
-        /// <summary>
-        /// Get integer value of excel cell
-        /// </summary>
-        /// <param name="data">array of cells</param>
-        /// <param name="index">array index</param>
-        /// <returns>integer value</returns>
-        public static int? GetIntValue(string[] data, int index)
-        {
-            if (data.Length > index)
-            {
-                if (int.TryParse(data[index], out int result))
-                {
-                    return result;
-                }
-            }
 
-            return null;
-        }
 
-        /// <summary>
-        /// Get datetime value of excel cell
-        /// </summary>
-        /// <param name="data">array of cells</param>
-        /// <param name="index">array index</param>
-        /// <returns>datetime value</returns>
-        public static DateTime GetDateValue(string[] data, int index)
-        {
-            DateTime estimatedDate = DateTime.Now;
-            if (!string.IsNullOrEmpty(data[index]))
-            {
-                DateTime testDate = DateTime.MinValue;
-                try
-                {
-                    if (!DateTime.TryParse(data[index], out testDate))
-                    {
-                        string[] dateInfo = Regex.Replace(data[index], @"\s", string.Empty).Split('/');
-                        if (dateInfo[1].Length == 1)
-                        {
-                            dateInfo[1] = "0" + dateInfo[1];
-                        }
 
-                        if (dateInfo[0].Length == 1)
-                        {
-                            dateInfo[0] = "0" + dateInfo[0];
-                        }
 
-                        int day = Convert.ToInt32(dateInfo[0]);
-                        int month = Convert.ToInt32(dateInfo[1]);
-                        if (month > 12)
-                        {
-                            month = Convert.ToInt32(dateInfo[0]);
-                            day = Convert.ToInt32(dateInfo[1]);
-                        }
-                        testDate = new DateTime(Convert.ToInt32(dateInfo[2][..4]), month, day);
-                    }
-                }
-                catch { }
-                if (testDate != DateTime.MinValue)
-                {
-                    estimatedDate = testDate;
-                }
-            }
-            return estimatedDate;
-        }
 
-        /// <summary>
-        /// Get enum value of excel cell
-        /// </summary>
-        /// <param name="data">array of cells</param>
-        /// <param name="index">array index</param>
-        /// <param name="type">type of the enum</param>
-        /// <returns>enum value</returns>
-        public static int GetIntEnum(string[] data, int index, Type type)
-        {
-            if (data.Length > index)
-            {
-                if (Enum.TryParse(type, Regex.Replace(data[index], @"\s", string.Empty), out object result))
-                {
-                    if (result != null)
-                    {
-                        return (int)result;
-                    }
-                }
-            }
-
-            return 0;
-        }
         #endregion
 
         #region Helper
-        private static object CheckData(string data)
-        {
-            if (string.IsNullOrEmpty(data))
-            {
-                return null;
-            }
 
-            if (double.TryParse(data, out double number))
-            {
-                return number;
-            }
-
-            return data;
-        }
         private static ExcelPackage GetPackage(Stream excelFileStream)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;

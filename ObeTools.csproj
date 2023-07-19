@@ -12,16 +12,16 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.4.9</Version>
+    <Version>1.5.0</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Excel;TLV;LOG;Encrypt;Hash;Number To Word;Arabic</PackageTags>
-    <PackageReleaseNotes>Fix number to words issue (آلاف)</PackageReleaseNotes>
+    <PackageReleaseNotes>Change Excel Cell Data to Plain Text</PackageReleaseNotes>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="F:\GitHup\ObeTools\me.png">
+    <None Include="F:\ObeTools\me.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
