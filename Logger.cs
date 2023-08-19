@@ -1,11 +1,11 @@
-﻿using ObeTools.Model;
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+
+using ObeTools.Model;
 
 namespace ObeTools
 {
@@ -32,6 +32,20 @@ namespace ObeTools
                 return text;
             }
             catch { return string.Empty; }
+        }
+
+        /// <summary>
+        /// Get Exception Information
+        /// </summary>
+        /// <param name="e">Input Exception</param>
+        /// <returns>Log Model Data</returns>
+        public static LogModel GetExceptionInfo(Exception e)
+        {
+            try
+            {
+                return GetExeptionModel(e);
+            }
+            catch { return null; }
         }
 
         /// <summary>
@@ -82,6 +96,12 @@ namespace ObeTools
         }
         private static string GetExeptionLogLine(Exception e, string caption)
         {
+            var model = GetExeptionModel(e);
+            model.Caption = caption;
+            return model.ToString();
+        }
+        private static LogModel GetExeptionModel(Exception e)
+        {
             var model = new LogModel();
             var message = new StringBuilder();
             Exception temp = e;
@@ -114,8 +134,7 @@ namespace ObeTools
                 GetMethodInfo(model, temp, st);
             }
             model.Data = message.ToString();
-            model.Caption = caption;
-            return model.ToString();
+            return model;
         }
         private static void GetMethodInfo(LogModel model, Exception temp, StackTrace st)
         {

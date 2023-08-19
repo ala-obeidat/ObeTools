@@ -2,8 +2,14 @@
 
 namespace ObeTools.Model
 {
-    internal class LogModel
+    /// <summary>
+    /// Log Information Model
+    /// </summary>
+    public class LogModel
     {
+        /// <summary>
+        /// Set Time of Exception
+        /// </summary>
         public LogModel()
         {
             StringTime = DateTime.Now.ToString("HH:mm:ss:ff");
