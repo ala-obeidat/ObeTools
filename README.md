@@ -1,7 +1,7 @@
 # ObeTools
  
 C# .net standard library to help any developer in his project.
-It contains my hole experience (which 8+ years) to optimize and collect what I need for every project that I create.
+It contains my hole experience (which 10+ years) to optimize and collect what I need for every project that I create.
 
 ### It has many static classes:
   - 1 => EncryptHasher: Handle encryption/decryption and hashing methods

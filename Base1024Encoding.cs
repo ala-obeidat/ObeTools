@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace ObeTools
 {
@@ -9,23 +10,38 @@ namespace ObeTools
     /// </summary>
     public static class Base1024Encoding
     {
+        static readonly Random _random = new Random();
         // The set of symbols used in the Base1024 encoding
-        private const string Symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!%,-.;_"
-            + "أبتثجحخدذرزسشصضطظعغفقكلمنهوي"
-            + "αβγδεζηθικλμνξοπρστυφχψω你好世界"
-            + "अनुरोधकियाआपकी"
-            + "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん"
-            + "가나다라마바사아자차카타파하"
-            + "กขคฆงจฉชซญฎฏฐฑฒณดตถทธนปผฝพฟภมยรฤลวศษสหฬอฮ"
-            + "ÁÉÍÓÚÝÞÆÖáðéíóúýþæöŐőŰű"
-            + "אבגדהוזחטיךכלםמןנסעףפץצקרשת"
-            + "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
-            + "ሀሁሂሃሄህሆሇለሉሊላሌልሎሏ"
-            + "অআইঈউঊঋএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহ"
-            + "✿❀❁❂❃❄❅❆❇❈❉❊"
-            + "ཀཁགགྷངཅཆཇཉཊཋཌཌྷཎཏཐདདྷནཔཕབཚཛཞཟའཡརལཤཥསཧཨ"
-            + "ĊċĠġĦħ"
-            + "ҲҶҢҒҚҚҰҚҪҚӮӨҰҲҚऄऔअआअइईउऊऋएऐऔखधनञथफभमयरलवशसह";
+        const string Symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!%,-.;_"
+        + "أبتثجحخدذرزسشصضطظعغفقكلمنهويىًإآئءؤ"
+        + "αβγδεζηθικλμνξοπρστυφχψω"
+        + "你好世界"
+        + "अनुरोधकियाआपकी"
+        + "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん"
+        + "가나다라마바사아자차카타파하"
+        + "กขคฆงจฉชซญฎฏฐฑฒณดตถทธนปผฝพฟภมยรฤลวศษสหฬอฮ"
+        + "ÁÉÍÓÚÝÞÆÖáðéíóúýþæöŐőŰű"
+        + "אבגדהוזחטיךכלםמןנסעףפץצקרשת"
+        + "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+        + "ሀሁሂሃሄህሆሇለሉሊላሌልሎሏ"
+        + "অআইঈউঊঋএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহ"
+        + "ⲀⲂⲄⲆⲈⲊⲌⲐⲒⲔⲖⲘⲚⲜⲞⲠⲢⲤⲦⲨⲪⲬⲮⲰⲲⲴⲶⲸⲺⲼⲾⳀⳂⳄⳆ"
+        + "ÆØÅæøåŒœŠšŽžŸÿÇçÑñĞğİıŞşßÞþÐð"
+        + "ΔΘΛΞΠΣΦΨΩΑΒΓΗΙΚΜΝΟΡΤΥΧ"
+        + "♠♣♥♦♪♫♯♭␣␤␥␦␧␨␩␪␫␬␭␮␯␰␱␲␳␴␵␶␷␸␹␺␻␼␽␾␿"
+        + "↔↕↖↗↘↙↩↪↬↭↮↯↰↱↲↳↴↵↶↷↸↹↺↻↼↽↾↿⇀⇁⇂⇃⇄⇅⇆⇇⇈⇉⇊"
+        + "≀≁≂≃≄≅≆≇≉≊≋≌≍≎≏≐≑≒≓≔≕≖≗≘≙≚≛≜≝≞≟"
+        + "♨♩⚡⚢⚣⚤⚥⚦⚧⚨⚩⚪⚫⚬⚭⚮⚯⚰⚱⚲⚳⚴⚵⚶⚷⚸⚹⚺⚻⚼⚽⚾"
+        + "⛂⛃⛄⛅⛈⛉⛊⛋⛌⛍⛎⛏⛐⛑⛒⛓⛔⛕⛖⛗⛘⛙⛚⛛⛜⛝⛞⛟"
+        + "⬂⬃⬄⬅⬆⬇⬈⬉⬊⬋⬌⬍⬎⬏⬐⬑⬒⬓⬔⬕⬖⬗⬘⬙⬚⬛⬜⬝⬞⬟⬠⬡⬢⬣⬤⬥⬦⬧⬨⬩⬪⬫"
+        + "⭅⭆⭇⭈⭉⭊⭋⭌⭍⭎⭏⭐⭑⭒⭓⭔⭕⭖⭗⭘⭙⭚⭛⭜⭝⭞⭟"
+        + "⺁⺂⺃⺄⺅⺆⺇⺈⺉⺊⺋⺌⺍⺎⺏⺐⺑⺒⺓⺔⺕⺖⺗⺘⺙⺚⺛⺜⺝⺞⺟⺠⺡⺢⺣⺤⺥"
+        + "⻰⻱⻲⻳⻴⻵⻶⻷⻸⻹⻺⻻⻼⻽⻾⻿⼀⼁⼂⼃⼄⼅⼆⼇⼈⼉⼊⼋⼌⼍⼎⼏⼐⼑⼒⼓⼔⼕⼖⼗⼘⼙⼚⼛⼜⼝"
+        + "⼞⼟⼠⼡⼢⼣⼤⼥⼦⼧⼨⼩⼪⼫⼬⼭⼮⼯⼰⼱⼲⼳⼴⼵⼶⼷⼸⼹⼺⼻⼼⼽⼾⼿⽀⽁⽂⽃⽄⽅⽆⽇⽈⽉⽊⽋"
+        + "⽌⽍⽎⽏⽐⽑⽒⽓⽔⽕⽖⽗⽘⽙⽚⽛⽜⽝⽞⽟⽠⽡⽢⽣⽤⽥⽦⽧⽨⽩⽪⽫⽬⽭⽮⽯⽰⽱⽲⽳⽴⽵⽶⽷⽸⽹⽺⽻⽼⽽⽾⽿⾀⾁⾂⾃⾄⾅⾆⾇⾈⾉⾊⾋⾌⾍⾎⾏⾐⾑⾒⾓⾔⾕⾖⾗⾘⾙⾚⾛⾜⾝⾞⾟⾠⾡⾢⾣⾤⾥⾦⾧⾨⾩⾪⾫⾬⾭⾮⾯⾰⾱⾲⾳⾴⾵⾶⾷⾸⾹⾺⾻⾼⾽⾾⾿⿀⿁⿂⿃⿄⿅⿆⿈⿉⿊⿋⿌⿍⿎⿏⿐⿑⿒⿓⿔⿕⿖⿗⿘⿙⿚⿛⿜⿝⿞⿟⿠⿡⿢⿣⿤⿥⿦⿧⿨⿩⿪⿫⿬⿭⿮⿯⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻⿼⿽⿾⿿"
+        + "ℶℷ©¶æåß";
+
+        const string separator = "ℵℸℹ℺℻";
 
         // The total number of symbols in the Base1024 encoding
         private const int BaseLength = 1024;
@@ -88,7 +104,7 @@ namespace ObeTools
             {
                 int charValue = c; // Convert the character to its numeric Unicode value
                 string base1024Char = ToBase1024(charValue); // Convert the numeric value to Base1024
-                result.Append(base1024Char + " "); // Append the Base1024 value to the result, separated by spaces
+                result.Append(base1024Char + separator[_random.Next(0, separator.Length - 1)]); // Append the Base1024 value to the result, separated by separator
             }
 
             return result.ToString().Trim(); // Return the final result, trimming any trailing spaces
@@ -104,7 +120,7 @@ namespace ObeTools
             var result = new StringBuilder();
 
             // Split the Base1024 string into individual Base1024 numbers
-            var base1024Chars = base1024Input.Split(' ');
+            var base1024Chars = base1024Input.Split(separator.ToCharArray());
 
             // Convert each Base1024 number back to the original character
             foreach (var base1024Char in base1024Chars)
