@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 using ObeTools.Model;
@@ -63,7 +64,10 @@ namespace ObeTools
             {
                 var model = new LogModel()
                 {
-                    Data = JsonSerializer.Serialize(data),
+                    Data = JsonSerializer.Serialize(data, new JsonSerializerOptions
+                    {
+                        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    }),
                     Caption = caption,
                     Method = method,
                 };
