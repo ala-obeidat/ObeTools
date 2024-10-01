@@ -64,13 +64,22 @@ namespace ObeTools
             {
                 var model = new LogModel()
                 {
-                    Data = JsonSerializer.Serialize(data, new JsonSerializerOptions
-                    {
-                        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                    }),
+
                     Caption = caption,
                     Method = method,
                 };
+                if (data != null)
+                {
+                    try
+                    {
+                        model.Data = JsonSerializer.Serialize(data, new JsonSerializerOptions
+                        {
+                            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                            WriteIndented = true,
+                        });
+                    }
+                    catch { }
+                }
                 WriteToFile(logName, logDirectory, "Info", model.ToString());
             }
             catch { }
