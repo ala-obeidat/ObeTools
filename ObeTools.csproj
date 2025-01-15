@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.5.61</Version>
+    <Version>1.5.7</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Excel;TLV;LOG;Encrypt;Hash;Number To Word;Arabic</PackageTags>
-    <PackageReleaseNotes>Add Encoder JavaScriptEncoder UnsafeRelaxedJsonEscaping to logger</PackageReleaseNotes>
+    <PackageReleaseNotes>Add custom salt to encryption methods</PackageReleaseNotes>
     <Platforms>AnyCPU;x64</Platforms>
     <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
   </PropertyGroup>
