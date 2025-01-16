@@ -298,6 +298,13 @@ namespace ObeTools
             {
                 str3 = num.ToString();
             }
+            if (str3.Length != saltLength)
+            {
+                if (str3.Length < saltLength) 
+                {
+                    str3 += salt.Substring(0, saltLength - str3.Length);
+                }
+            }
             for (int c = 0; c < saltLength; c++)
             {
                 chArray[c] = (char)(str3[c] ^ salt[c]);
@@ -320,8 +327,9 @@ namespace ObeTools
             {
                 chArray[c] = (char)(input[c] ^ salt[c]);
             }
+
             char[] chArray2 = new char[num];
-            int num2 = Convert.ToInt32(new string(chArray));
+            int num2 = Convert.ToInt32(new string(chArray[..4]));
             for (int i = 0; i < num; i++)
             {
                 chArray2[i] = (char)(input[(i * 2) + saltLength] ^ Key[num2 + i]);
