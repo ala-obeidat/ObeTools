@@ -94,7 +94,15 @@ namespace ObeTools
 
                 result[k] = tempChar;
             }
-            return Encoding.UTF8.GetString(Convert.FromBase64String(new string(result)));
+            try
+            {
+                return Encoding.UTF8.GetString(Convert.FromBase64String(new string(result)));
+            }
+            catch
+            {
+
+                return FromSafeBase64(input + "_");
+            }
         }
 
         /// <summary>
@@ -300,7 +308,7 @@ namespace ObeTools
             }
             if (str3.Length != saltLength)
             {
-                if (str3.Length < saltLength) 
+                if (str3.Length < saltLength)
                 {
                     str3 += salt.Substring(0, saltLength - str3.Length);
                 }
