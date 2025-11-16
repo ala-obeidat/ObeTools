@@ -80,8 +80,9 @@ namespace ObeTools
         /// Get flat string from safe(url encoding) base64 string
         /// </summary>
         /// <param name="input">safe base64 string</param>
+        /// <param name="tries">number of tries</param>
         /// <returns>flat string</returns>
-        public static string FromSafeBase64(string input)
+        public static string FromSafeBase64(string input, int tries = 3)
         {
             char[] result = new char[input.Length];
             for (int k = 0; k < result.Length; k++)
@@ -100,8 +101,8 @@ namespace ObeTools
             }
             catch
             {
-
-                return FromSafeBase64(input + "_");
+                tries--;
+                return FromSafeBase64(input + "_", tries);
             }
         }
 
