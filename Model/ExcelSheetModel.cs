@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ObeTools.Model
 {
 	/// <summary>
