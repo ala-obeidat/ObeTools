@@ -44,6 +44,118 @@ namespace ObeTools
             var excelPackage = GetPackage(excelFileStream);
 
             // add a new worksheet to the empty workbook
+            WriteSheetDataToExcelPackage(excelPackage, sheetName, headers, data, titleDesign, dataDesign, rightToLeft);
+
+            // set some document properties
+            excelPackage.Workbook.Properties.Title = sheetName;
+            excelPackage.Workbook.Properties.Application = "Obe Tools";
+            excelPackage.Workbook.Properties.Author = "Ala Obeidat";
+            excelPackage.Workbook.Properties.Comments = "This excel file from Obe tools";
+            // set some extended property values
+            excelPackage.Workbook.Properties.Company = "JITBS";
+            // set some custom property values
+            excelPackage.Workbook.Properties.SetCustomPropertyValue("Checked by", "Ala Obeidat");
+            excelPackage.Workbook.Properties.SetCustomPropertyValue("AssemblyName", "EPPlus");
+            //save our new workbook and we are done!
+            excelPackage.Save();
+        }
+
+        /// <summary>
+        /// Create modren excel file (xlsx) with multiple sheet
+        /// </summary>
+        /// <param name="excelFileStream">Output stream to write excel file on it</param>
+        /// <param name="sheetData">list of Excel sheet name with rows data and headers</param>
+        /// <param name="headers">Title first row</param>
+        /// <param name="titleDesign">[Optinal parameter] to design title(header)
+        /// with default value: 
+        ///  Font.Bold = true;
+        ///  Font.Color.SetColor(Color.White);
+        ///  WrapText=true;
+        ///  Border.Right.Style = ExcelBorderStyle.Thick;
+        ///  Border.Top.Style = ExcelBorderStyle.Thick;
+        ///  Border.Left.Style = ExcelBorderStyle.Thick;
+        ///  Border.Bottom.Style = ExcelBorderStyle.Thick;
+        ///  Fill.PatternType = ExcelFillStyle.Solid;
+        ///  Fill.BackgroundColor.SetColor(Color.DarkBlue);
+        /// </param>
+        /// <param name="dataDesign">[Optinal parameter] to design body(data)</param>
+        /// <param name="rightToLeft">[Default is false] Right to left layout</param>
+        public static void CreateExcel(Stream excelFileStream,List<ExcelSheetModel> sheetData, ExcelDesign titleDesign = null, ExcelDesign dataDesign = null, bool rightToLeft = false)
+        {
+            var excelPackage = GetPackage(excelFileStream);
+            foreach (var item in sheetData)
+            {
+                WriteSheetDataToExcelPackage(excelPackage, item.SheetName, item.Headers, item.Data, titleDesign, dataDesign, rightToLeft);
+
+            }
+            // add a new worksheet to the empty workbook
+
+            // set some document properties
+            excelPackage.Workbook.Properties.Title = string.Join(" | ",sheetData.Select(s=>s.SheetName))[..200];
+            excelPackage.Workbook.Properties.Application = "Obe Tools";
+            excelPackage.Workbook.Properties.Author = "Ala Obeidat";
+            excelPackage.Workbook.Properties.Comments = "This excel file from Obe tools";
+            // set some extended property values
+            excelPackage.Workbook.Properties.Company = "JITBS";
+            // set some custom property values
+            excelPackage.Workbook.Properties.SetCustomPropertyValue("Checked by", "Ala Obeidat");
+            excelPackage.Workbook.Properties.SetCustomPropertyValue("AssemblyName", "EPPlus");
+            //save our new workbook and we are done!
+            excelPackage.Save();
+        }
+
+
+        /// <summary>
+        /// Get Cells from excel file 
+        /// </summary>
+        /// <param name="excelFileStream"> must be Read/Write stream and still open</param>
+        /// <param name="skipFirstRow">first row is title [default is false]</param>
+        /// <param name="removeEmptyRows">remove empty rows from result cells [default is true]</param>
+        /// <returns> List of string array, each item in list is row and it's array is the coulmn for every cell </returns>
+        public static List<string[]> GetCells(Stream excelFileStream, bool skipFirstRow = false, bool removeEmptyRows = true)
+        {
+            var excelPackage = GetPackage(excelFileStream);
+            List<string[]> pageStrings = new List<string[]>();
+            var osheet = excelPackage.Workbook.Worksheets.FirstOrDefault();
+            if (osheet != null)
+            {
+                var totalRowsXLSX = osheet.Dimension.End.Row;
+                int totalcols = osheet.Dimension.End.Column;
+                for (int i = skipFirstRow ? 2 : 1; i <= totalRowsXLSX; i++)
+                {
+                    string[] subStrings = new string[totalcols];
+                    for (int j = 1; j <= totalcols; j++)
+                    {
+                        subStrings[j - 1] = (osheet.Cells[i, j].Value == null) ? string.Empty : osheet.Cells[i, j].Value.ToString();
+                    }
+                    if (!removeEmptyRows || subStrings.Any(x => !string.IsNullOrEmpty(x)))
+                    {
+                        pageStrings.Add(subStrings);
+                    }
+                }
+            }
+            return pageStrings;
+        }
+
+
+
+
+
+
+
+
+        #endregion
+
+        #region Helper
+
+        private static ExcelPackage GetPackage(Stream excelFileStream)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            return new ExcelPackage(excelFileStream);
+        }
+
+        private static void WriteSheetDataToExcelPackage(ExcelPackage excelPackage, string sheetName, List<string> headers, List<string[]> data, ExcelDesign titleDesign, ExcelDesign dataDesign, bool rightToLeft)
+        {
             ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add(sheetName);
             //Add the headers
             for (int i = 0; i < headers.Count; i++)
@@ -150,69 +262,8 @@ namespace ObeTools
             string.Format("Page {0} of {1}", ExcelHeaderFooter.PageNumber, ExcelHeaderFooter.NumberOfPages);
             // add the sheet name to the footer
             worksheet.HeaderFooter.OddFooter.CenteredText = ExcelHeaderFooter.SheetName;
-
-            // set some document properties
-            excelPackage.Workbook.Properties.Title = sheetName;
-            excelPackage.Workbook.Properties.Application = "Obe Tools";
-            excelPackage.Workbook.Properties.Author = "Ala Obeidat";
-            excelPackage.Workbook.Properties.Comments = "This excel file from Obe tools";
-            // set some extended property values
-            excelPackage.Workbook.Properties.Company = "JITBS";
-            // set some custom property values
-            excelPackage.Workbook.Properties.SetCustomPropertyValue("Checked by", "Ala Obeidat");
-            excelPackage.Workbook.Properties.SetCustomPropertyValue("AssemblyName", "EPPlus");
-            //save our new workbook and we are done!
-            excelPackage.Save();
         }
 
-        /// <summary>
-        /// Get Cells from excel file 
-        /// </summary>
-        /// <param name="excelFileStream"> must be Read/Write stream and still open</param>
-        /// <param name="skipFirstRow">first row is title [default is false]</param>
-        /// <param name="removeEmptyRows">remove empty rows from result cells [default is true]</param>
-        /// <returns> List of string array, each item in list is row and it's array is the coulmn for every cell </returns>
-        public static List<string[]> GetCells(Stream excelFileStream, bool skipFirstRow = false, bool removeEmptyRows = true)
-        {
-            var excelPackage = GetPackage(excelFileStream);
-            List<string[]> pageStrings = new List<string[]>();
-            var osheet = excelPackage.Workbook.Worksheets.FirstOrDefault();
-            if (osheet != null)
-            {
-                var totalRowsXLSX = osheet.Dimension.End.Row;
-                int totalcols = osheet.Dimension.End.Column;
-                for (int i = skipFirstRow ? 2 : 1; i <= totalRowsXLSX; i++)
-                {
-                    string[] subStrings = new string[totalcols];
-                    for (int j = 1; j <= totalcols; j++)
-                    {
-                        subStrings[j - 1] = (osheet.Cells[i, j].Value == null) ? string.Empty : osheet.Cells[i, j].Value.ToString();
-                    }
-                    if (!removeEmptyRows || subStrings.Any(x => !string.IsNullOrEmpty(x)))
-                    {
-                        pageStrings.Add(subStrings);
-                    }
-                }
-            }
-            return pageStrings;
-        }
-
-
-
-
-
-
-
-
-        #endregion
-
-        #region Helper
-
-        private static ExcelPackage GetPackage(Stream excelFileStream)
-        {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            return new ExcelPackage(excelFileStream);
-        }
         #endregion
 
     }

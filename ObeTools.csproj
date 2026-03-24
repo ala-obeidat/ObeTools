@@ -12,17 +12,17 @@
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.6.3</Version>
+    <Version>1.6.4</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageTags>Excel;TLV;LOG;Encrypt;Hash;Number To Word;Arabic</PackageTags>
-    <PackageReleaseNotes>auto-detects DB logger</PackageReleaseNotes>
+    <PackageReleaseNotes>Add write excel file with multi sheet support</PackageReleaseNotes>
     <Platforms>AnyCPU;x64</Platforms>
     <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="F:\ObeTools\me.png">
+    <None Include="D:\Code\ObeTools\me.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
