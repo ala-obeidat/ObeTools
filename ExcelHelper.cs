@@ -89,9 +89,13 @@ namespace ObeTools
 
             }
             // add a new worksheet to the empty workbook
-
+            var title = string.Join(" | ", sheetData.Select(s => s.SheetName));
+            if(!string.IsNullOrEmpty(title) && title.Length > 200)
+            {
+                title = title.Substring(0, 200) +" ...";
+            }
             // set some document properties
-            excelPackage.Workbook.Properties.Title = string.Join(" | ",sheetData.Select(s=>s.SheetName))[..200];
+            excelPackage.Workbook.Properties.Title = title;
             excelPackage.Workbook.Properties.Application = "Obe Tools";
             excelPackage.Workbook.Properties.Author = "Ala Obeidat";
             excelPackage.Workbook.Properties.Comments = "This excel file from Obe tools";
