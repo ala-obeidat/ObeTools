@@ -65,7 +65,6 @@ namespace ObeTools
         /// </summary>
         /// <param name="excelFileStream">Output stream to write excel file on it</param>
         /// <param name="sheetData">list of Excel sheet name with rows data and headers</param>
-        /// <param name="headers">Title first row</param>
         /// <param name="titleDesign">[Optinal parameter] to design title(header)
         /// with default value: 
         ///  Font.Bold = true;
