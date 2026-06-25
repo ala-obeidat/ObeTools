@@ -84,6 +84,32 @@ namespace ObeTools
         /// <returns>flat string</returns>
         public static string FromSafeBase64(string input, int tries = 3)
         {
+            if (tries > 10)
+                tries = 10;
+            char[] result = SafeBase64(input);
+            var newInput = input;
+            for (int i = 0; i < tries; i++)
+            {
+                try
+                {
+                    return Encoding.UTF8.GetString(Convert.FromBase64String(new string(result)));
+                }
+                catch
+                {
+                    try
+                    {
+                        newInput += "_";
+                        result = SafeBase64(newInput);
+                    }
+                    catch { }
+
+                }
+            }
+            return Encoding.UTF8.GetString(Convert.FromBase64String(new string(result)));
+        }
+
+        private static char[] SafeBase64(string input)
+        {
             char[] result = new char[input.Length];
             for (int k = 0; k < result.Length; k++)
             {
@@ -95,15 +121,8 @@ namespace ObeTools
 
                 result[k] = tempChar;
             }
-            try
-            {
-                return Encoding.UTF8.GetString(Convert.FromBase64String(new string(result)));
-            }
-            catch
-            {
-                tries--;
-                return FromSafeBase64(input + "_", tries);
-            }
+
+            return result;
         }
 
         /// <summary>
