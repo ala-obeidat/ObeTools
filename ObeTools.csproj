@@ -1,45 +1,57 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.1;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Ala Obeidat</Authors>
-    <Description>Help any .Net developer</Description>
+    <Description>Helpers for .NET developers: thread-safe file logger, hashing and authenticated encryption (SecretProtector), number to words (English/Arabic), money rounding and VAT, ZATCA TLV encoding, file type detection and Excel import/export.</Description>
     <Copyright>www.alaobeidat.com</Copyright>
     <PackageProjectUrl>https://github.com/ala-obeidat/ObeTools</PackageProjectUrl>
     <PackageIcon>me.png</PackageIcon>
     <RepositoryUrl>https://github.com/ala-obeidat/ObeTools</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.6.7</Version>
+    <Version>1.7.0</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageTags>Excel;TLV;LOG;Encrypt;Hash;Number To Word;Arabic</PackageTags>
-    <PackageReleaseNotes>Fix FromSafeBase64 loop</PackageReleaseNotes>
-    <Platforms>AnyCPU;x64</Platforms>
-    <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
+    <PackageTags>Excel;TLV;ZATCA;LOG;Logger;Encrypt;Hash;AES-GCM;Number To Word;Arabic;VAT</PackageTags>
+    <PackageReleaseNotes>See https://github.com/ala-obeidat/ObeTools/blob/main/CHANGELOG.md</PackageReleaseNotes>
+
+    <!-- Quality gates -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+
+    <!-- Reproducible, debuggable packages -->
+    <Deterministic>true</Deterministic>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+
+    <!-- The test project lives below this folder; keep it out of the library. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);tests/**;artifacts/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="D:\Code\ObeTools\me.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <InternalsVisibleTo Include="ObeTools.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="me.png;README.md;CHANGELOG.md" />
+    <None Include="me.png;README.md;CHANGELOG.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.2.2" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="me.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+  <!-- Logger and the URL-token helpers use System.Text.Json directly; do not rely on EPPlus bringing it in. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
 </Project>

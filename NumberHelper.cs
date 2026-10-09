@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,124 +12,153 @@ namespace ObeTools
     /// </summary>
     public static class NumberHelper
     {
-        #region Variable 
+        #region Variable
+
+        /// <summary>
+        /// Largest whole amount <see cref="NumberToWords"/> can spell (999,999,999,999.99).
+        /// </summary>
+        public const decimal MaxWordsAmount = 999_999_999_999.99m;
+
+        private static readonly string[] EnOnes =
+        {
+            "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+            "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+        };
+
+        private static readonly string[] EnTens =
+        {
+            "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+        };
+
+        private static readonly (long Value, string Name)[] EnScales =
+        {
+            (1_000_000_000, "Billion"), (1_000_000, "Million"), (1_000, "Thousand")
+        };
+
+        private static readonly string[] ArOnes =
+        {
+            "", "واحد", "إثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"
+        };
+
+        private static readonly string[] ArTens =
+        {
+            "", "عشرة", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"
+        };
+
+        private static readonly string[] ArHundreds =
+        {
+            "", "مئة", "مئتين", "ثلاثمائة", "أربعمائة", "خمسمائة", "ستمائة", "سبعمائة", "ثمانمائة", "تسعمائة"
+        };
+
+        // Singular, dual, plural (3-10), accusative singular (11-99)
+        private static readonly (long Value, string One, string Two, string Plural, string Accusative)[] ArScales =
+        {
+            (1_000_000_000, "مليار", "مليارين", "مليارات", "ملياراً"),
+            (1_000_000, "مليون", "مليونين", "ملايين", "مليوناً"),
+            (1_000, "ألف", "ألفين", "آلاف", "ألفاً")
+        };
+
+        private const string DefaultCentEn = "Halalah";
+        private const string DefaultCentAr = "هللة";
+
         #endregion
 
         #region Method
         /// <summary>
-        /// Display number as words
+        /// Display an amount as words, for example "One Thousand Two Hundred Thirty Four SAR and Fifty Six Halala".
+        /// The amount is rounded to 2 decimals (midpoint away from zero) and does not depend on the current culture.
         /// </summary>
-        /// <param name="number">number in double format</param>
+        /// <param name="number">amount in double format</param>
         /// <param name="type">words charectures language</param>
         /// <param name="currencyAr">Currency Label in Arabi</param>
         /// <param name="currencyEn">Currency Label in English</param>
-        /// <param name="centLabelAr">Partial currency label in Arabic</param>
-        /// <param name="centLabelEn">Partial currency label in English</param>
-        /// <returns></returns>
+        /// <param name="centLabelAr">Partial currency label in Arabic (default "هللة")</param>
+        /// <param name="centLabelEn">Partial currency label in English (default "Halalah")</param>
+        /// <returns>English text, Arabic text, or "English&lt;br&gt;Arabic" for <see cref="NumberWordType.All"/></returns>
+        /// <exception cref="ArgumentOutOfRangeException">The amount is NaN, infinite, or its magnitude exceeds <see cref="MaxWordsAmount"/>.</exception>
         public static string NumberToWords(double number, NumberWordType type, string currencyAr, string currencyEn, string centLabelAr = "", string centLabelEn = "")
         {
-            string negativeAr = string.Empty;
-            string negativeEn = string.Empty;
-
-            if (number < 0)
-            {
-                number = number * -1;
-                negativeAr = "سالب";
-                negativeEn = "Minus";
-            }
-            var space = " ";
-            if (type == NumberWordType.All)
-            {
-                var convert = ConvertToWords(number.ToString(), type, centLabelEn, centLabelAr).Split("<br>");
-                var englihsConvert = convert[0].Replace(" ", space)
-                    .Replace("-", " ").Replace("point", " and ")
-                .Replace("Saudi Riyal", currencyEn);
-                space = " و";
-                var arabicConvert = convert[1]
-                    .Replace("واحد#", "")
-                    .Replace(" ", space)
-                    .Replace("-", " ")
-                    .Replace("#", " ")
-                    .Replace("إثنان مئة", "مئتين")
-                    .Replace("ة مئة", "مائة")
-                    .Replace("يمائة", "مائة")
-                    .Replace("إثنان ألف", "ألفين")
-                    .Replace("إثنان مليون", "مليونين")
-                    .Replace("إثنان مليار", "مليارين")
-                    .Replace("ريال سعودي", currencyAr)
-                    .Replace("فاصلة  و", "فاصلة ")
-                    .Replace("فاصلة ", " و")
-                    .Replace("ثلاثة ألف", "ثلاثة آلاف")
-                    .Replace("أربعة ألف", "أربعة آلاف")
-                    .Replace("خمسة ألف", "خمسة آلاف")
-                    .Replace("ستة ألف", "ستة آلاف")
-                    .Replace("سبعة ألف", "سبعة آلاف")
-                    .Replace("ثمنية ألف", "ثمانية آلاف")
-                    .Replace("تسعة ألف", "تسعة آلاف")
-                    .Replace("عشرة ألف", "عشرة آلاف");
-                return $"{negativeEn} {englihsConvert}<br>{negativeAr} {arabicConvert}";
-
-            }
-
-            if (type == NumberWordType.Arabic)
-            {
-                space = " و";
-                return negativeAr + " " + ConvertToWords(number.ToString(), type, centLabelEn, centLabelAr)
-                    .Replace("واحد#", "")
-                    .Replace(" ", space)
-                    .Replace("-", " ")
-                    .Replace("#", " ")
-                    .Replace("إثنان مئة", "مئتين")
-                    .Replace("ة مئة", "مائة")
-                    .Replace("يمائة", "مائة")
-                    .Replace("إثنان ألف", "ألفين")
-                    .Replace("إثنان مليون", "مليونين")
-                    .Replace("إثنان مليار", "مليارين")
-                    .Replace("ريال سعودي", currencyAr)
-                    .Replace("Saudi Riyal", currencyEn)
-                    .Replace("فاصلة  و", "فاصلة ")
-                    .Replace("فاصلة ", " و")
-
-                    .Replace("ثلاثة ألف", "ثلاثة آلاف")
-                    .Replace("أربعة ألف", "أربعة آلاف")
-                    .Replace("خمسة ألف", "خمسة آلاف")
-                    .Replace("ستة ألف", "ستة آلاف")
-                    .Replace("سبعة ألف", "سبعة آلاف")
-                    .Replace("ثمنية ألف", "ثمانية آلاف")
-                    .Replace("تسعة ألف", "تسعة آلاف")
-                    .Replace("عشرة ألف", "عشرة آلاف")
-                    .Replace("#", " ");
-            }
-
-            return negativeEn + " " + ConvertToWords(number.ToString(), type, centLabelEn, centLabelAr)
-                .Replace(" ", space).Replace("-", " ").Replace("point", " and ")
-                .Replace("Saudi Riyal", currencyEn)
-                .Replace("ريال سعودي", currencyAr);
+            return AmountToWords(ToDecimal(number, nameof(number)), type, currencyAr, currencyEn, centLabelAr, centLabelEn);
         }
 
         /// <summary>
-        /// Round double to spasific number of digits
+        /// Display a decimal amount as words. Same output as <see cref="NumberToWords"/>.
+        /// </summary>
+        /// <param name="amount">amount</param>
+        /// <param name="type">words charectures language</param>
+        /// <param name="currencyAr">Currency Label in Arabi</param>
+        /// <param name="currencyEn">Currency Label in English</param>
+        /// <param name="centLabelAr">Partial currency label in Arabic (default "هللة")</param>
+        /// <param name="centLabelEn">Partial currency label in English (default "Halalah")</param>
+        /// <returns>English text, Arabic text, or "English&lt;br&gt;Arabic" for <see cref="NumberWordType.All"/></returns>
+        /// <exception cref="ArgumentOutOfRangeException">The magnitude exceeds <see cref="MaxWordsAmount"/>.</exception>
+        public static string AmountToWords(decimal amount, NumberWordType type, string currencyAr, string currencyEn, string centLabelAr = "", string centLabelEn = "")
+        {
+            var rounded = Math.Round(amount, 2, MidpointRounding.AwayFromZero);
+            bool negative = rounded < 0;
+            if (negative)
+            {
+                rounded = -rounded;
+            }
+            if (rounded > MaxWordsAmount)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount), amount, $"The amount must be between -{MaxWordsAmount} and {MaxWordsAmount}.");
+            }
+
+            long whole = (long)decimal.Truncate(rounded);
+            int cents = (int)((rounded - whole) * 100);
+
+            string centEn = string.IsNullOrEmpty(centLabelEn) ? DefaultCentEn : centLabelEn;
+            string centAr = string.IsNullOrEmpty(centLabelAr) ? DefaultCentAr : centLabelAr;
+
+            switch (type)
+            {
+                case NumberWordType.English:
+                    return English(whole, cents, negative, currencyEn, centEn);
+                case NumberWordType.Arabic:
+                    return Arabic(whole, cents, negative, currencyAr, centAr);
+                case NumberWordType.All:
+                    return $"{English(whole, cents, negative, currencyEn, centEn)}<br>{Arabic(whole, cents, negative, currencyAr, centAr)}";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown NumberWordType.");
+            }
+        }
+
+        /// <summary>
+        /// Round double to spasific number of digits.
+        /// NOTE: this is <see cref="Math.Round(double, int)"/>: binary doubles with banker's rounding, so
+        /// Round(0.285, 2) = 0.28 and Round(1.005, 2) = 1. Kept unchanged because stored invoices were computed with it.
+        /// Use <see cref="RoundMoney"/> for new money calculations.
         /// </summary>
         /// <param name="input">double number</param>
         /// <param name="digits">number of digits</param>
         /// <returns>Number after round</returns>
         public static double Round(double input, int digits)
         {
-            return Math.Round(Convert.ToDouble(input), digits);
+            return Math.Round(input, digits);
         }
 
         /// <summary>
-        /// Round all double number in object to spasific number of digits
+        /// Round a money amount half away from zero (0.285 => 0.29, -0.285 => -0.29).
+        /// </summary>
+        /// <param name="value">amount</param>
+        /// <param name="digits">number of decimals (default 2)</param>
+        /// <returns>rounded amount</returns>
+        public static decimal RoundMoney(decimal value, int digits = 2)
+        {
+            return Math.Round(value, digits, MidpointRounding.AwayFromZero);
+        }
+
+        /// <summary>
+        /// Round all double properties of an object to spasific number of digits (same rounding as <see cref="Round"/>).
+        /// Read-only properties are skipped.
         /// </summary>
         /// <typeparam name="T">Type of the object</typeparam>
         /// <param name="input">input object</param>
         /// <param name="digits">number of digits</param>
         public static void RoundObject<T>(T input, int digits)
         {
-            IEnumerable<PropertyInfo> properties = input.GetType().GetProperties()
-               .Where(x => x.PropertyType == typeof(double));
-
-            foreach (PropertyInfo property in properties)
+            foreach (PropertyInfo property in WritableProperties(input, typeof(double)))
             {
                 object dt = property.GetValue(input);
 
@@ -140,317 +169,223 @@ namespace ObeTools
                 property.SetValue(input, Round(Convert.ToDouble(dt), digits));
             }
         }
+
+        /// <summary>
+        /// Round all double, double?, decimal and decimal? properties of an object with the given midpoint rule.
+        /// Read-only properties are skipped.
+        /// </summary>
+        /// <typeparam name="T">Type of the object</typeparam>
+        /// <param name="input">input object</param>
+        /// <param name="digits">number of digits</param>
+        /// <param name="mode">midpoint rule, for money use <see cref="MidpointRounding.AwayFromZero"/></param>
+        public static void RoundObject<T>(T input, int digits, MidpointRounding mode)
+        {
+            foreach (PropertyInfo property in WritableProperties(input, typeof(double), typeof(double?), typeof(decimal), typeof(decimal?)))
+            {
+                object value = property.GetValue(input);
+                switch (value)
+                {
+                    case null:
+                        break;
+                    case double d:
+                        property.SetValue(input, Math.Round(d, digits, mode));
+                        break;
+                    case decimal m:
+                        property.SetValue(input, Math.Round(m, digits, mode));
+                        break;
+                }
+            }
+        }
         #endregion
 
         #region Helper
-        private static string ConvertToWords(string numb, NumberWordType numberWordType, string centLable = "", string centLableAr = "")
-        {
 
-            string val = "", wholeNo = numb, points, andStr = "point", andStrAr = "فاصلة",
-                pointStr = "", secondPointStr = "", endStr = "Saudi Riyal", endStrAr = "ريال-سعودي",
-                words, words2, centAr = "هللة", cent = "Halalah";
-            if (!string.IsNullOrEmpty(centLable))
+        private static IEnumerable<PropertyInfo> WritableProperties(object input, params Type[] types)
+        {
+            if (input == null)
             {
-                cent = centLable;
+                return Enumerable.Empty<PropertyInfo>();
             }
-            if (!string.IsNullOrEmpty(centLableAr))
+            return input.GetType().GetProperties()
+                .Where(x => types.Contains(x.PropertyType) && x.CanWrite && x.GetIndexParameters().Length == 0);
+        }
+
+        private static decimal ToDecimal(double number, string paramName)
+        {
+            if (double.IsNaN(number) || double.IsInfinity(number))
             {
-                centAr = centLableAr;
+                throw new ArgumentOutOfRangeException(paramName, number, "The number must be finite.");
             }
             try
             {
-                int decimalPlace = numb.IndexOf(".");
-                if (decimalPlace > 0)
-                {
-                    numb = string.Format("{0:0.00}", Round(Convert.ToDouble(numb), 2));
-                    wholeNo = numb[..decimalPlace];
-                    points = numb[(decimalPlace + 1)..];
-                    if (Convert.ToInt32(points) > 0)
-                    {
-                        if (numberWordType != NumberWordType.English)
-                        {
-                            secondPointStr = ConvertWholeNumber(points, NumberWordType.Arabic);
-                        }
-                        pointStr = ConvertWholeNumber(points, numberWordType);
-                    }
-                }
-                if (numb == "0")
-                {
-                    words = "Zero";
-                    words2 = "صفر";
-                }
-                else
-                {
-                    words = ConvertWholeNumber(wholeNo, NumberWordType.English);
-                    words2 = ConvertWholeNumber(wholeNo, NumberWordType.Arabic);
-                }
-
-                switch (numberWordType)
-                {
-                    case NumberWordType.English:
-                        if (string.IsNullOrEmpty(pointStr))
-                        {
-                            val = $"{words} {endStr}";
-                        }
-                        else
-                        {
-                            val = $"{words} {endStr} {andStr} {pointStr} {cent}";
-                        }
-                        break;
-                    case NumberWordType.Arabic:
-                        if (string.IsNullOrEmpty(secondPointStr))
-                        {
-                            val = $"{words2}-{endStrAr}";
-                        }
-                        else
-                        {
-                            val = $"{words2}-{endStrAr}-{andStrAr}-{secondPointStr}-{centAr}";
-                        }
-                        break;
-                    case NumberWordType.All:
-                        string valAr = "";
-                        string valEn = "";
-                        if (string.IsNullOrEmpty(pointStr))
-                        {
-                            valAr = $"{words} {endStr}";
-                        }
-                        else
-                        {
-                            valAr = $"{words} {endStr} {andStr} {pointStr} {cent}";
-                        }
-                        if (string.IsNullOrEmpty(secondPointStr))
-                        {
-                            valEn = $"{words2}-{endStrAr}";
-                        }
-                        else
-                        {
-                            valEn = $"{words2}-{endStrAr}-{andStrAr}-{secondPointStr}-{centAr}";
-                        }
-                        val = $"{valAr}<br>{valEn}";
-                        break;
-                    default:
-                        break;
-                }
+                return (decimal)number; // rounds to 15 significant digits, so 0.1 stays 0.1
             }
-            catch { }
-            return val;
+            catch (OverflowException)
+            {
+                throw new ArgumentOutOfRangeException(paramName, number, $"The amount must be between -{MaxWordsAmount} and {MaxWordsAmount}.");
+            }
         }
-        private static string ConvertDecimals(string number)
+
+        private static string English(long whole, int cents, bool negative, string currency, string centLabel)
         {
-            string cd = "", digit, engOne;
-
-            for (int i = 0; i < number.Length; i++)
+            var parts = new List<string>();
+            if (negative)
             {
-                digit = number[i].ToString();
-                if (digit.Equals("0"))
-                {
-
-                    engOne = "Zero";
-                }
-                else
-                {
-
-                    engOne = Ones(digit, NumberWordType.English);
-                }
-                cd += " " + engOne;
+                parts.Add("Minus");
             }
-
-
-            return cd;
-        }
-        private static string ConvertWholeNumber(string Number, NumberWordType numberWordType)
-        {
-            bool beginsZero = false;
-            string word = "";
-            try
+            parts.Add(whole == 0 ? "Zero" : EnglishWhole(whole));
+            AddIfAny(parts, currency);
+            if (cents > 0)
             {
+                parts.Add("and");
+                parts.Add(EnglishGroup(cents));
+                AddIfAny(parts, centLabel);
+            }
+            return string.Join(" ", parts);
+        }
 
-                bool isDone = false;
-                double dblAmt = Convert.ToDouble(Number);
-                if (dblAmt > 0)
+        private static string EnglishWhole(long number)
+        {
+            var parts = new List<string>();
+            foreach (var (value, name) in EnScales)
+            {
+                if (number >= value)
                 {
-                    beginsZero = Number.StartsWith("0");
-
-                    int numDigits = Number.Length;
-                    int pos = 0;
-                    string place = "";
-                    switch (numDigits)
-                    {
-                        case 1:
-                            word = Ones(Number, numberWordType);
-                            isDone = true;
-                            break;
-                        case 2:
-                            word = Tens(Number, numberWordType);
-                            isDone = true;
-                            break;
-                        case 3:
-                            pos = (numDigits % 3) + 1;
-                            place = numberWordType == NumberWordType.Arabic ? "#مئة " : " Hundred ";
-                            break;
-                        case 4:
-                        case 5:
-                        case 6:
-                            pos = (numDigits % 4) + 1;
-                            place = numberWordType == NumberWordType.Arabic ? "#ألف " : " Thousand ";
-                            break;
-                        case 7:
-                        case 8:
-                        case 9:
-                            pos = (numDigits % 7) + 1;
-                            place = numberWordType == NumberWordType.Arabic ? "#مليون " : " Million ";
-                            break;
-                        case 10:
-                        case 11:
-                        case 12:
-
-                            pos = (numDigits % 10) + 1;
-                            place = numberWordType == NumberWordType.Arabic ? "#مليار " : " Billion ";
-                            break;
-                        default:
-                            isDone = true;
-                            break;
-                    }
-                    if (!isDone)
-                    {
-                        if (Number[..pos] != "0" && Number[pos..] != "0")
-                        {
-                            try
-                            {
-                                word = ConvertWholeNumber(Number[..pos], numberWordType) + place + ConvertWholeNumber(Number[pos..], numberWordType);
-                            }
-                            catch { }
-                        }
-                        else
-                        {
-                            word = ConvertWholeNumber(Number[..pos], numberWordType) + ConvertWholeNumber(Number[pos..], numberWordType);
-                        }
-                    }
-                    if (word.Trim().Equals(place.Trim()))
-                    {
-                        word = "";
-                    }
+                    parts.Add(EnglishGroup((int)(number / value)) + " " + name);
+                    number %= value;
                 }
             }
-            catch { }
-            if (beginsZero)
+            if (number > 0)
             {
-                return numberWordType == NumberWordType.Arabic ? $"{word.Trim()}" : $"{word.Trim()}";
+                parts.Add(EnglishGroup((int)number));
             }
-            return word.Trim();
+            return string.Join(" ", parts);
         }
-        private static string Ones(string Number, NumberWordType numberWordType)
-        {
-            int _Number = Convert.ToInt32(Number);
-            string name = "";
-            switch (_Number)
-            {
-                case 1:
-                    name = numberWordType == NumberWordType.Arabic ? "واحد" : "One";
-                    break;
-                case 2:
-                    name = numberWordType == NumberWordType.Arabic ? "إثنان" : "Two";
-                    break;
-                case 3:
-                    name = numberWordType == NumberWordType.Arabic ? "ثلاثة" : "Three";
-                    break;
-                case 4:
-                    name = numberWordType == NumberWordType.Arabic ? "أربعة" : "Four";
-                    break;
-                case 5:
-                    name = numberWordType == NumberWordType.Arabic ? "خمسة" : "Five";
-                    break;
-                case 6:
-                    name = numberWordType == NumberWordType.Arabic ? "ستة" : "Six";
-                    break;
-                case 7:
-                    name = numberWordType == NumberWordType.Arabic ? "سبعة" : "Seven";
-                    break;
-                case 8:
-                    name = numberWordType == NumberWordType.Arabic ? "ثمانية" : "Eight";
-                    break;
-                case 9:
-                    name = numberWordType == NumberWordType.Arabic ? "تسعة" : "Nine";
-                    break;
-            }
-            return name;
-        }
-        private static string Tens(string Number, NumberWordType numberWordType)
-        {
-            int _Number = Convert.ToInt32(Number);
-            string name = null;
-            switch (_Number)
-            {
-                case 10:
-                    name = numberWordType == NumberWordType.Arabic ? "عشرة" : "Ten";
-                    break;
-                case 11:
-                    name = numberWordType == NumberWordType.Arabic ? "إحدى-عشر" : "Eleven";
-                    break;
-                case 12:
-                    name = numberWordType == NumberWordType.Arabic ? "إثنا-عشر" : "Twelve";
-                    break;
-                case 13:
-                    name = numberWordType == NumberWordType.Arabic ? "ثلاثة-عشر" : "Thirteen";
-                    break;
-                case 14:
-                    name = numberWordType == NumberWordType.Arabic ? "أربعة-عشر" : "Fourteen";
-                    break;
-                case 15:
-                    name = numberWordType == NumberWordType.Arabic ? "خمسة-عشر" : "Fifteen";
-                    break;
-                case 16:
-                    name = numberWordType == NumberWordType.Arabic ? "ستة-عشر" : "Sixteen";
-                    break;
-                case 17:
-                    name = numberWordType == NumberWordType.Arabic ? "سبعة-عشر" : "Seventeen";
-                    break;
-                case 18:
-                    name = numberWordType == NumberWordType.Arabic ? "ثمانية-عشر" : "Eighteen";
-                    break;
-                case 19:
-                    name = numberWordType == NumberWordType.Arabic ? "تسعة-عشر" : "Nineteen";
-                    break;
-                case 20:
-                    name = numberWordType == NumberWordType.Arabic ? "عشرون" : "Twenty";
-                    break;
-                case 30:
-                    name = numberWordType == NumberWordType.Arabic ? "ثلاثون" : "Thirty";
-                    break;
-                case 40:
-                    name = numberWordType == NumberWordType.Arabic ? "أربعون" : "Fourty";
-                    break;
-                case 50:
-                    name = numberWordType == NumberWordType.Arabic ? "خمسون" : "Fifty";
-                    break;
-                case 60:
-                    name = numberWordType == NumberWordType.Arabic ? "ستون" : "Sixty";
-                    break;
-                case 70:
-                    name = numberWordType == NumberWordType.Arabic ? "سبعون" : "Seventy";
-                    break;
-                case 80:
-                    name = numberWordType == NumberWordType.Arabic ? "ثمانون" : "Eighty";
-                    break;
-                case 90:
-                    name = numberWordType == NumberWordType.Arabic ? "تسعون" : "Ninety";
-                    break;
-                default:
-                    if (_Number > 0)
-                    {
-                        if (numberWordType == NumberWordType.Arabic)
-                        {
-                            name = Ones(Number[1..], numberWordType) + " " + Tens(Number[..1] + "0", numberWordType);
-                        }
-                        else
-                        {
-                            name = Tens(Number[..1] + "0", numberWordType) + " " + Ones(Number[1..], numberWordType);
-                        }
 
-                    }
-                    break;
+        // 1..999
+        private static string EnglishGroup(int number)
+        {
+            var parts = new List<string>();
+            if (number >= 100)
+            {
+                parts.Add(EnOnes[number / 100] + " Hundred");
+                number %= 100;
             }
-            return name;
+            if (number >= 20)
+            {
+                parts.Add(EnTens[number / 10]);
+                number %= 10;
+            }
+            if (number > 0)
+            {
+                parts.Add(EnOnes[number]);
+            }
+            return string.Join(" ", parts);
+        }
+
+        private static string Arabic(long whole, int cents, bool negative, string currency, string centLabel)
+        {
+            var text = whole == 0 ? "صفر" : ArabicWhole(whole);
+            if (!string.IsNullOrWhiteSpace(currency))
+            {
+                text += " " + currency.Trim();
+            }
+            if (cents > 0)
+            {
+                text += " و" + ArabicGroup(cents);
+                if (!string.IsNullOrWhiteSpace(centLabel))
+                {
+                    text += " " + centLabel.Trim();
+                }
+            }
+            return negative ? "سالب " + text : text;
+        }
+
+        private static string ArabicWhole(long number)
+        {
+            var parts = new List<string>();
+            foreach (var scale in ArScales)
+            {
+                if (number >= scale.Value)
+                {
+                    parts.Add(ArabicScale((int)(number / scale.Value), scale));
+                    number %= scale.Value;
+                }
+            }
+            if (number > 0)
+            {
+                parts.Add(ArabicGroup((int)number));
+            }
+            return string.Join(" و", parts);
+        }
+
+        // count (1..999) of thousands, millions or billions, with the counted noun in the right form.
+        private static string ArabicScale(int count, (long Value, string One, string Two, string Plural, string Accusative) scale)
+        {
+            if (count == 1)
+            {
+                return scale.One;
+            }
+            if (count == 2)
+            {
+                return scale.Two;
+            }
+            int lastTwo = count % 100;
+            string noun = lastTwo >= 3 && lastTwo <= 10 ? scale.Plural
+                : lastTwo >= 11 ? scale.Accusative
+                : scale.One;
+            return ArabicGroup(count) + " " + noun;
+        }
+
+        // 1..999
+        private static string ArabicGroup(int number)
+        {
+            var parts = new List<string>();
+            if (number >= 100)
+            {
+                parts.Add(ArHundreds[number / 100]);
+                number %= 100;
+            }
+            if (number > 0)
+            {
+                parts.Add(ArabicBelowHundred(number));
+            }
+            return string.Join(" و", parts);
+        }
+
+        // 1..99
+        private static string ArabicBelowHundred(int number)
+        {
+            if (number < 10)
+            {
+                return ArOnes[number];
+            }
+            if (number == 10)
+            {
+                return ArTens[1];
+            }
+            if (number == 11)
+            {
+                return "أحد عشر";
+            }
+            if (number == 12)
+            {
+                return "إثنا عشر";
+            }
+            if (number < 20)
+            {
+                return ArOnes[number % 10] + " عشر";
+            }
+            int ones = number % 10;
+            return ones == 0 ? ArTens[number / 10] : ArOnes[ones] + " و" + ArTens[number / 10];
+        }
+
+        private static void AddIfAny(List<string> parts, string value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                parts.Add(value.Trim());
+            }
         }
         #endregion
     }

@@ -1,4 +1,6 @@
-﻿namespace ObeTools.Model
+using System;
+
+namespace ObeTools.Model
 {
     /// <summary>
     /// File information
@@ -11,9 +13,24 @@
         public byte[] FileBytes { get; set; }
 
         /// <summary>
-        /// File extenstion
+        /// File extension without the dot (for example "png"), or empty when unknown.
         /// </summary>
-        public string Extenstion { get; set; }
+        public string Extension { get; set; }
+
+        /// <summary>
+        /// File extenstion. Misspelled alias of <see cref="Extension"/>.
+        /// </summary>
+        [Obsolete("Use Extension.")]
+        public string Extenstion
+        {
+            get => Extension;
+            set => Extension = value;
+        }
+
+        /// <summary>
+        /// MIME type (for example "image/png"), or "application/octet-stream" when unknown.
+        /// </summary>
+        public string MimeType { get; set; }
 
         /// <summary>
         /// File category
@@ -21,9 +38,14 @@
         public FileInfoType Type { get; set; }
 
         /// <summary>
-        /// Size of file in bytes
+        /// Size of file in bytes (same as <see cref="SizeInBytes"/>; kept as double for compatibility).
         /// </summary>
         public double Size { get; set; }
+
+        /// <summary>
+        /// Size of file in bytes.
+        /// </summary>
+        public long SizeInBytes { get; set; }
     }
 
     /// <summary>
@@ -32,8 +54,14 @@
     public enum FileInfoType
     {
         /// <summary>
-        /// Unkown
+        /// Unknown
         /// </summary>
+        Unknown = 0,
+
+        /// <summary>
+        /// Misspelled alias of <see cref="Unknown"/>.
+        /// </summary>
+        [Obsolete("Use Unknown.")]
         Unkown = 0,
 
         /// <summary>
@@ -60,5 +88,20 @@
         /// Video file
         /// </summary>
         Video = 5,
+
+        /// <summary>
+        /// Spreadsheet (xlsx)
+        /// </summary>
+        Spreadsheet = 6,
+
+        /// <summary>
+        /// Presentation (pptx)
+        /// </summary>
+        Presentation = 7,
+
+        /// <summary>
+        /// Archive (zip, apk and other containers)
+        /// </summary>
+        Archive = 8,
     }
 }
