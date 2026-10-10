@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.1
+
+- **Behaviour change (Arabic NumberToWords):** when a count of thousands, millions or billions is over 100 and ends
+  in 1 or 2, the last one or two are now written as their own word:
+  501,000 is "خمسمائة ألف وألف" (was "خمسمائة وواحد ألف"), 602,000 is "ستمائة ألف وألفين",
+  201,000,000 is "مئتين مليون ومليون". Checked over 1,999,999 amounts: only these cases change, and English is
+  unchanged.
+
 ## 1.7.0
 
 Safe, additive release: existing tokens, hashes, TLV bytes and log line format are unchanged.

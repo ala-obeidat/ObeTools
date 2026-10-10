@@ -331,6 +331,11 @@ namespace ObeTools
                 return scale.Two;
             }
             int lastTwo = count % 100;
+            if (count > 100 && (lastTwo == 1 || lastTwo == 2))
+            {
+                // 501,000 => "خمسمائة ألف وألف", 602,000 => "ستمائة ألف وألفين"
+                return ArabicGroup(count - lastTwo) + " " + scale.One + " و" + (lastTwo == 1 ? scale.One : scale.Two);
+            }
             string noun = lastTwo >= 3 && lastTwo <= 10 ? scale.Plural
                 : lastTwo >= 11 ? scale.Accusative
                 : scale.One;
